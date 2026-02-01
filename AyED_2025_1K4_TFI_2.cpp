@@ -2,14 +2,14 @@
 #include <string.h> // Libreria para utilizar strcmp(), strlen(), etc.
 #include <ctype.h>  // Libreria para utilizar isupper, islower, isdigit
 
-// Estructuras de Datos (basadas en plan.md)
-struct Usuario {
+// ========= ENTIDADES ==========
+struct usuario {
     char user[11];
     char pass[33];
     char nombre[60];
 };
 
-struct Puesto {
+struct puesto {
     int id;
     char nombreCargo[50];
     int edadMinima;
@@ -19,7 +19,7 @@ struct Puesto {
     bool activo;
 };
 
-struct Empleado {
+struct empleado {
     int dni;
     char nombre[100];
     int edad;
@@ -30,9 +30,11 @@ struct Empleado {
 
 // ========== PROTOTIPO DE FUNCIONES ==========
 
-// Validaciones
-bool validarUsuario(char user[]);
-bool validarPass(char pass[]);
+// Menús
+void menuPrincipal();
+void menuGestionPuestos();
+void menuGestionEmpleados();
+void menuMatchmaking();
 
 // Gestión de Usuarios
 void cargarUsuariosEnMemoria();
@@ -40,11 +42,9 @@ void guardarUsuariosEnArchivo();
 void registrarUsuario();
 void iniciarSesion();
 
-// Menús
-void menuPrincipal();
-void menuGestionPuestos();
-void menuGestionEmpleados();
-void menuMatchmaking();
+// Validaciones
+bool validarUsuario(char user[]);
+bool validarPass(char pass[]);
 
 // ============================================
 
@@ -61,7 +61,7 @@ const int numOpciones = sizeof(opcionesMenu) / sizeof(opcionesMenu[0]); // Divid
 bool sesionActiva = false;
 
 // Variables Globales para Gestión de Usuarios en Memoria
-Usuario usuariosEnMemoria[100]; // Soporta hasta 100 usuarios
+usuario usuariosEnMemoria[100]; // Soporta hasta 100 usuarios
 int cantidadUsuarios = 0;
 
 int main() {
@@ -70,6 +70,159 @@ int main() {
     menuPrincipal();
     guardarUsuariosEnArchivo(); // Guardar cambios al salir
     return 0;
+}
+
+// --- Implementación de Menús (Flujo Principal) ---
+
+void menuPrincipal() {
+    int opcion;
+    do {
+        printf("\n========== MENU PRINCIPAL ==========\n");
+        for (int i = 1; i < numOpciones; i++) {
+            if (i > 2 && !sesionActiva) continue;
+            printf("[%d]. %s\n", i, opcionesMenu[i]);
+        }
+        printf("[0]. %s\n", opcionesMenu[0]);
+        printf("==================================\n");
+        printf("> Seleccione una opcion: ");
+        scanf("%d", &opcion);
+
+        switch (opcion) {
+            case 1:
+                iniciarSesion();
+                break;
+            case 2:
+                registrarUsuario();
+                break;
+            case 3:
+                if (sesionActiva) menuGestionPuestos();
+                else printf("Opcion no valida.\n");
+                break;
+            case 4:
+                if (sesionActiva) menuGestionEmpleados();
+                else printf("Opcion no valida.\n");
+                break;
+            case 5:
+                 if (sesionActiva) menuMatchmaking();
+                 else printf("Opcion no valida.\n");
+                break;
+            case 0:
+                printf("Saliendo del programa...\n");
+                break;
+            default:
+                printf("Opcion no valida. Intente de nuevo.\n");
+                break;
+        }
+    } while (opcion != 0);
+}
+
+void menuGestionPuestos() {
+    printf("\n--- Gestion de Puestos (en construccion) ---\n");
+    // Logica para ABM de puestos
+}
+
+void menuGestionEmpleados() {
+    printf("\n--- Gestion de Empleados (en construccion) ---\n");
+    // Logica para ABM de empleados
+}
+
+void menuMatchmaking() {
+    printf("\n--- Matchmaking (en construccion) ---\n");
+    // Logica para generar coincidencias
+}
+
+// --- Implementación de Gestión de Usuarios ---
+
+void registrarUsuario() {
+    if (cantidadUsuarios >= 100) {
+        printf("Error: Se ha alcanzado el limite maximo de usuarios.\n");
+        return;
+    }
+
+    usuario nuevoUsuario; // Se actualiza el tipo de la variable
+    printf("\n--- Registrar Nuevo Usuario ---\n");
+
+    do {
+        printf("Ingrese nombre de usuario (6-10 chars, 1ra minus, min 2 mayus, max 3 dig): ");
+        scanf("%s", nuevoUsuario.user);
+        if (!validarUsuario(nuevoUsuario.user)) {
+            printf("Error: El nombre de usuario no cumple con las reglas.\n");
+        }
+    } while (!validarUsuario(nuevoUsuario.user));
+
+    do {
+        printf("Ingrese contrasena (6-32 chars, 1 mayus, 1 minus, 1 num, sin simbolos ni secuencias): ");
+        scanf("%s", nuevoUsuario.pass);
+        if (!validarPass(nuevoUsuario.pass)) {
+            printf("Error: La contrasena no cumple con las reglas de seguridad.\n");
+        }
+    } while (!validarPass(nuevoUsuario.pass));
+
+    printf("Ingrese su nombre completo: ");
+    while(getchar() != '\n');
+    fgets(nuevoUsuario.nombre, sizeof(nuevoUsuario.nombre), stdin);
+    nuevoUsuario.nombre[strcspn(nuevoUsuario.nombre, "\n")] = 0;
+
+    usuariosEnMemoria[cantidadUsuarios] = nuevoUsuario;
+    cantidadUsuarios++;
+
+    printf("\nUsuario '%s' registrado correctamente en memoria.\n", nuevoUsuario.user);
+}
+
+void iniciarSesion() {
+    char user[11];
+    char pass[33];
+    bool encontrado = false;
+
+    printf("\n--- Iniciar Sesion ---\n");
+    printf("Usuario: ");
+    scanf("%s", user);
+    printf("Contrasena: ");
+    scanf("%s", pass);
+
+    for (int i = 0; i < cantidadUsuarios; i++) {
+        if (strcmp(user, usuariosEnMemoria[i].user) == 0 && strcmp(pass, usuariosEnMemoria[i].pass) == 0) {
+            printf("\n¡Bienvenido, %s! Sesion iniciada correctamente.\n", usuariosEnMemoria[i].nombre);
+            sesionActiva = true;
+            encontrado = true;
+            break;
+        }
+    }
+
+    if (!encontrado) {
+        printf("\nError: Usuario o contrasena incorrectos.\n");
+        sesionActiva = false;
+    }
+}
+
+void cargarUsuariosEnMemoria() {
+    FILE *archivo = fopen("usuarios.dat", "rb");
+    if (archivo == NULL) {
+        printf("Archivo 'usuarios.dat' no encontrado. Se creara uno nuevo al registrar usuarios.\n");
+        return;
+    }
+
+    cantidadUsuarios = 0;
+    // Se actualiza el tipo en sizeof()
+    while(fread(&usuariosEnMemoria[cantidadUsuarios], sizeof(usuario), 1, archivo) == 1) {
+        cantidadUsuarios++;
+        if (cantidadUsuarios >= 100) break;
+    }
+    fclose(archivo);
+    printf("Se cargaron %d usuarios en memoria.\n", cantidadUsuarios);
+}
+
+void guardarUsuariosEnArchivo() {
+    FILE *archivo = fopen("usuarios.dat", "wb");
+    if (archivo == NULL) {
+        printf("Error: No se pudo abrir el archivo para guardar los usuarios.\n");
+        return;
+    }
+
+    // Se actualiza el tipo en sizeof()
+    fwrite(usuariosEnMemoria, sizeof(usuario), cantidadUsuarios, archivo);
+    fclose(archivo);
+    printf("Se guardaron %d usuarios en 'usuarios.dat'.\n", cantidadUsuarios);
 }
 
 // --- Implementación de Funciones de Validación ---
@@ -137,156 +290,4 @@ bool validarPass(char pass[]) {
 
     // a. Deberá contener al menos una letra mayúscula, una letra minúscula y un número.
     return tieneMayuscula && tieneMinuscula && tieneNumero;
-}
-
-
-// --- Implementación de Gestión de Usuarios ---
-
-void cargarUsuariosEnMemoria() {
-    FILE *archivo = fopen("usuarios.dat", "rb");
-    if (archivo == NULL) {
-        printf("Archivo 'usuarios.dat' no encontrado. Se creara uno nuevo al registrar usuarios.\n");
-        return;
-    }
-
-    cantidadUsuarios = 0;
-    while(fread(&usuariosEnMemoria[cantidadUsuarios], sizeof(Usuario), 1, archivo) == 1) {
-        cantidadUsuarios++;
-        if (cantidadUsuarios >= 100) break;
-    }
-    fclose(archivo);
-    printf("Se cargaron %d usuarios en memoria.\n", cantidadUsuarios);
-}
-
-void guardarUsuariosEnArchivo() {
-    FILE *archivo = fopen("usuarios.dat", "wb");
-    if (archivo == NULL) {
-        printf("Error: No se pudo abrir el archivo para guardar los usuarios.\n");
-        return;
-    }
-
-    fwrite(usuariosEnMemoria, sizeof(Usuario), cantidadUsuarios, archivo);
-    fclose(archivo);
-    printf("Se guardaron %d usuarios en 'usuarios.dat'.\n", cantidadUsuarios);
-}
-
-void registrarUsuario() {
-    if (cantidadUsuarios >= 100) {
-        printf("Error: Se ha alcanzado el limite maximo de usuarios.\n");
-        return;
-    }
-
-    Usuario nuevoUsuario;
-    printf("\n--- Registrar Nuevo Usuario ---\n");
-
-    do {
-        printf("Ingrese nombre de usuario (6-10 chars, 1ra minus, min 2 mayus, max 3 dig): ");
-        scanf("%s", nuevoUsuario.user);
-        if (!validarUsuario(nuevoUsuario.user)) {
-            printf("Error: El nombre de usuario no cumple con las reglas.\n");
-        }
-    } while (!validarUsuario(nuevoUsuario.user));
-
-    do {
-        printf("Ingrese contrasena (6-32 chars, 1 mayus, 1 minus, 1 num, sin simbolos ni secuencias): ");
-        scanf("%s", nuevoUsuario.pass);
-        if (!validarPass(nuevoUsuario.pass)) {
-            printf("Error: La contrasena no cumple con las reglas de seguridad.\n");
-        }
-    } while (!validarPass(nuevoUsuario.pass));
-
-    printf("Ingrese su nombre completo: ");
-    while(getchar() != '\n');
-    fgets(nuevoUsuario.nombre, sizeof(nuevoUsuario.nombre), stdin);
-    nuevoUsuario.nombre[strcspn(nuevoUsuario.nombre, "\n")] = 0;
-
-    usuariosEnMemoria[cantidadUsuarios] = nuevoUsuario;
-    cantidadUsuarios++;
-
-    printf("\nUsuario '%s' registrado correctamente en memoria.\n", nuevoUsuario.user);
-}
-
-void iniciarSesion() {
-    char user[11];
-    char pass[33];
-    bool encontrado = false;
-
-    printf("\n--- Iniciar Sesion ---\n");
-    printf("Usuario: ");
-    scanf("%s", user);
-    printf("Contrasena: ");
-    scanf("%s", pass);
-
-    for (int i = 0; i < cantidadUsuarios; i++) {
-        if (strcmp(user, usuariosEnMemoria[i].user) == 0 && strcmp(pass, usuariosEnMemoria[i].pass) == 0) {
-            printf("\n¡Bienvenido, %s! Sesion iniciada correctamente.\n", usuariosEnMemoria[i].nombre);
-            sesionActiva = true;
-            encontrado = true;
-            break;
-        }
-    }
-
-    if (!encontrado) {
-        printf("\nError: Usuario o contrasena incorrectos.\n");
-        sesionActiva = false;
-    }
-}
-
-// --- Implementación de Menús ---
-
-void menuPrincipal() {
-    int opcion;
-    do {
-        printf("\n========== MENU PRINCIPAL ==========\n");
-        for (int i = 1; i < numOpciones; i++) {
-            if (i > 2 && !sesionActiva) continue;
-            printf("[%d]. %s\n", i, opcionesMenu[i]);
-        }
-        printf("[0]. %s\n", opcionesMenu[0]);
-        printf("==================================\n");
-        printf("> Seleccione una opcion: ");
-        scanf("%d", &opcion);
-
-        switch (opcion) {
-            case 1:
-                iniciarSesion();
-                break;
-            case 2:
-                registrarUsuario();
-                break;
-            case 3:
-                if (sesionActiva) menuGestionPuestos();
-                else printf("Opcion no valida.\n");
-                break;
-            case 4:
-                if (sesionActiva) menuGestionEmpleados();
-                else printf("Opcion no valida.\n");
-                break;
-            case 5:
-                 if (sesionActiva) menuMatchmaking();
-                 else printf("Opcion no valida.\n");
-                break;
-            case 0:
-                printf("Saliendo del programa...\n");
-                break;
-            default:
-                printf("Opcion no valida. Intente de nuevo.\n");
-                break;
-        }
-    } while (opcion != 0);
-}
-
-void menuGestionPuestos() {
-    printf("\n--- Gestion de Puestos (en construccion) ---\n");
-    // Logica para ABM de puestos
-}
-
-void menuGestionEmpleados() {
-    printf("\n--- Gestion de Empleados (en construccion) ---\n");
-    // Logica para ABM de empleados
-}
-
-void menuMatchmaking() {
-    printf("\n--- Matchmaking (en construccion) ---\n");
-    // Logica para generar coincidencias
 }
