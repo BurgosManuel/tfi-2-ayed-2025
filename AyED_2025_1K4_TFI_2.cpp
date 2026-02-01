@@ -46,9 +46,9 @@ void iniciarSesion();
 bool validarUsuario(char user[]);
 bool validarPass(char pass[]);
 
-// ============================================
+// ========== VARIABLES GLOBALES ==========
 
-// Variables Globales para el Menú y Sesión
+// Opciones de menú
 const char *opcionesMenu[] = {
     "Salir",
     "Iniciar Sesion",
@@ -58,12 +58,16 @@ const char *opcionesMenu[] = {
     "Matchmaking"
 };
 const int numOpciones = sizeof(opcionesMenu) / sizeof(opcionesMenu[0]); // Dividimos el total de bytes del arreglo por el tamaño de un puntero para obtener la cantidad de opciones.
+
+// Estado de sesión
 bool sesionActiva = false;
 
-// Variables Globales para Gestión de Usuarios en Memoria
-usuario usuariosEnMemoria[100]; // Soporta hasta 100 usuarios
+// Usuarios
 int cantidadUsuarios = 0;
+usuario usuariosEnMemoria[100]; // Soporta hasta 100 usuarios
 
+
+// ========= IMPLEMENTACIÓN PRINCIPAL ==========
 int main() {
     printf("========== SISTEMA DE GESTION Y MATCHMAKING LABORAL ==========\n");
     cargarUsuariosEnMemoria();
@@ -72,8 +76,7 @@ int main() {
     return 0;
 }
 
-// --- Implementación de Menús (Flujo Principal) ---
-
+// ========== IMPLEMENTACIÓN DE MENÚS ==========
 void menuPrincipal() {
     int opcion;
     do {
@@ -131,7 +134,7 @@ void menuMatchmaking() {
     // Logica para generar coincidencias
 }
 
-// --- Implementación de Gestión de Usuarios ---
+// ========= IMPLEMENTACIÓN DE GESTIÓN DE USUARIOS ==========
 
 void registrarUsuario() {
     if (cantidadUsuarios >= 100) {
@@ -225,7 +228,7 @@ void guardarUsuariosEnArchivo() {
     printf("Se guardaron %d usuarios en 'usuarios.dat'.\n", cantidadUsuarios);
 }
 
-// --- Implementación de Funciones de Validación ---
+// ========== IMPLEMENTACIÓN DE VALIDACIONES ==========
 
 bool esCaracterPermitido(char c) {
     char permitidos[] = "+-/*?!";
