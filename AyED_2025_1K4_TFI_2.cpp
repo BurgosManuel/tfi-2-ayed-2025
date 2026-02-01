@@ -31,6 +31,7 @@ struct empleado {
 // ========== PROTOTIPO DE FUNCIONES ==========
 
 // Menús
+void menuLogin();
 void menuPrincipal();
 void menuGestionPuestos();
 void menuGestionEmpleados();
@@ -48,16 +49,22 @@ bool validarPass(char pass[]);
 
 // ========== VARIABLES GLOBALES ==========
 
-// Opciones de menú
-const char *opcionesMenu[] = {
+// Opciones de menu login
+const char *opcionesLogin[] = {
     "Salir",
     "Iniciar Sesion",
-    "Registrar Nuevo Usuario",
+    "Registrar Nuevo Usuario"
+};
+const int numOpcionesLogin = sizeof(opcionesLogin) / sizeof(opcionesLogin[0]); // Total bytes / bytes de 1 elemento = cantidad de elementos
+
+// Opciones de menu principal
+const char *opcionesPrincipal[] = {
+    "Cerrar Sesion",
     "Gestion de Puestos",
     "Gestion de Empleados",
     "Matchmaking"
 };
-const int numOpciones = sizeof(opcionesMenu) / sizeof(opcionesMenu[0]); // Dividimos el total de bytes del arreglo por el tamaño de un puntero para obtener la cantidad de opciones.
+const int numOpcionesPrincipal = sizeof(opcionesPrincipal) / sizeof(opcionesPrincipal[0]); // Total bytes / bytes de 1 elemento = cantidad de elementos
 
 // Estado de sesión
 bool sesionActiva = false;
@@ -71,55 +78,72 @@ usuario usuariosEnMemoria[100]; // Soporta hasta 100 usuarios
 int main() {
     printf("========== SISTEMA DE GESTION Y MATCHMAKING LABORAL ==========\n");
     cargarUsuariosEnMemoria();
-    menuPrincipal();
+    menuLogin(); // El programa comienza en el menú de login
     guardarUsuariosEnArchivo(); // Guardar cambios al salir
     return 0;
 }
 
 // ========== IMPLEMENTACIÓN DE MENÚS ==========
-void menuPrincipal() {
+
+void menuLogin() {
     int opcion;
+
     do {
-        printf("\n========== MENU PRINCIPAL ==========\n");
-        for (int i = 1; i < numOpciones; i++) {
-            if (i > 2 && !sesionActiva) continue;
-            printf("[%d]. %s\n", i, opcionesMenu[i]);
+        printf("\n========== BIENVENIDO ==========\n");
+        for (int i = 1; i < numOpcionesLogin; i++) {
+            printf("[%d]. %s\n", i, opcionesLogin[i]);
         }
-        printf("[0]. %s\n", opcionesMenu[0]);
-        printf("==================================\n");
+        printf("[0]. %s\n", opcionesLogin[0]);
+        printf("=================================\n");
         printf("> Seleccione una opcion: ");
         scanf("%d", &opcion);
 
         switch (opcion) {
             case 1:
                 iniciarSesion();
+                if (sesionActiva) {
+                    menuPrincipal();
+                }
                 break;
             case 2:
                 registrarUsuario();
                 break;
-            case 3:
-                if (sesionActiva) {
-                    menuGestionPuestos();
-                } else {
-                    printf("Opcion no valida.\n");
-                }
-                break;
-            case 4:
-                if (sesionActiva) {
-                    menuGestionEmpleados();
-                } else {
-                    printf("Opcion no valida.\n");
-                }
-                break;
-            case 5:
-                if (sesionActiva) {
-                    menuMatchmaking();
-                } else {
-                    printf("Opcion no valida.\n");
-                }
-                break;
             case 0:
                 printf("Saliendo del programa...\n");
+                break;
+            default:
+                printf("Opcion no valida. Intente de nuevo.\n");
+                break;
+        }
+    } while (opcion != 0 && !sesionActiva);
+}
+
+void menuPrincipal() {
+    int opcion;
+
+    do {
+        printf("\n========== MENU PRINCIPAL ==========\n");
+        for (int i = 1; i < numOpcionesPrincipal; i++) {
+            printf("[%d]. %s\n", i, opcionesPrincipal[i]);
+        }
+        printf("[0]. %s\n", opcionesPrincipal[0]);
+        printf("=====================================\n");
+        printf("> Seleccione una opcion: ");
+        scanf("%d", &opcion);
+
+        switch (opcion) {
+            case 1:
+                menuGestionPuestos();
+                break;
+            case 2:
+                menuGestionEmpleados();
+                break;
+            case 3:
+                menuMatchmaking();
+                break;
+            case 0:
+                sesionActiva = false;
+                printf("Sesion cerrada correctamente.\n");
                 break;
             default:
                 printf("Opcion no valida. Intente de nuevo.\n");
@@ -194,7 +218,7 @@ void iniciarSesion() {
 
     for (int i = 0; i < cantidadUsuarios; i++) {
         if (strcmp(user, usuariosEnMemoria[i].user) == 0 && strcmp(pass, usuariosEnMemoria[i].pass) == 0) {
-            printf("\n¡Bienvenido, %s! Sesion iniciada correctamente.\n", usuariosEnMemoria[i].nombre);
+            printf("\nBienvenido, %s! Sesion iniciada correctamente.\n", usuariosEnMemoria[i].nombre);
             sesionActiva = true;
             encontrado = true;
             break;

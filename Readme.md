@@ -12,13 +12,18 @@ Los datos de los usuarios se persisten en un archivo binario llamado `usuarios.d
 
 1.  **Inicio (`main`)**:
     *   Al ejecutar el programa, se invoca a `cargarUsuariosEnMemoria()` para leer los datos de los usuarios desde `usuarios.dat` y cargarlos en un arreglo en memoria.
-    *   A continuación, se muestra el `menuPrincipal()`, que es el punto de entrada para todas las operaciones del sistema.
-    *   Cuando el usuario elige la opción de salir del menú principal, el programa llama a `guardarUsuariosEnArchivo()` para escribir el estado actual de los usuarios (incluyendo los nuevos registros) de vuelta al archivo `usuarios.dat`.
+    *   A continuación, se muestra el `menuLogin()`, que es el punto de entrada para la autenticación.
+    *   Cuando el usuario elige la opción de salir, el programa llama a `guardarUsuariosEnArchivo()` para escribir el estado actual de los usuarios de vuelta al archivo `usuarios.dat`.
 
-2.  **Menú Principal (`menuPrincipal`)**:
-    *   Presenta las opciones disponibles al usuario.
-    *   Inicialmente, solo se pueden seleccionar "Iniciar Sesión", "Registrar Nuevo Usuario" o "Salir".
-    *   Las opciones "Gestión de Puestos", "Gestión de Empleados" y "Matchmaking" solo se vuelven visibles y accesibles después de que un usuario haya iniciado sesión correctamente (la variable global `sesionActiva` se establece en `true`).
+2.  **Menú de Login (`menuLogin`)**:
+    *   Es el primer menú que ve el usuario al iniciar el programa.
+    *   Presenta las opciones: "Iniciar Sesión", "Registrar Nuevo Usuario" y "Salir".
+    *   Solo después de un inicio de sesión exitoso (`sesionActiva = true`) se permite el acceso al `menuPrincipal()`.
+
+3.  **Menú Principal (`menuPrincipal`)**:
+    *   Solo accesible después de autenticarse correctamente.
+    *   Presenta las opciones: "Gestión de Puestos", "Gestión de Empleados", "Matchmaking" y "Cerrar Sesión".
+    *   Al cerrar sesión, el usuario regresa al `menuLogin()`.
 
 ## Funcionalidades Principales
 
