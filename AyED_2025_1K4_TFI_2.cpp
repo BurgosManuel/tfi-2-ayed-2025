@@ -272,21 +272,29 @@ bool esCaracterPermitido(char c) {
 }
 
 bool validarUsuario(char user[]) {
+    // Cantidad mínima de 6 caracteres y máxima de 10.
     int len = strlen(user);
     if (len < 6 || len > 10) return false;
+
+    // b. Comenzar con una letra minúscula.
     if (!islower(user[0])) return false;
 
     int mayusculas = 0;
     int digitos = 0;
     for (int i = 0; i < len; i++) {
+        // c. Tener al menos 2 letras mayúsculas.
         if (isupper(user[i])) mayusculas++;
+        // d. Tener como máximo 3 dígitos.
         if (isdigit(user[i])) digitos++;
+        // Podrán ser letras, números y/o símbolos del conjunto {+,-,/,*,?,!}
         if (!isupper(user[i]) && !islower(user[i]) && !isdigit(user[i]) && !esCaracterPermitido(user[i])) {
-            return false; // Caracter no permitido
+            return false;
         }
     }
 
+    // c. Tener al menos 2 letras mayúsculas.
     if (mayusculas < 2) return false;
+    // d. Tener como máximo 3 dígitos.
     if (digitos > 3) return false;
 
     return true;
@@ -310,7 +318,7 @@ bool validarPass(char pass[]) {
         // b. No podrá contener ningún carácter de puntuación, ni acentos, ni espacios. Sólo caracteres alfanuméricos.
         if (!isalnum(pass[i])) return false;
 
-        // d. No debe tener más de 3 caracteres numéricos consecutivos.
+        // d. No debe tener más de 3 caracteres numéricos consecutivos en secuencia ascendente.
         if (i > 1 && isdigit(pass[i]) && isdigit(pass[i-1]) && isdigit(pass[i-2])) {
              if (pass[i] == pass[i-1] + 1 && pass[i-1] == pass[i-2] + 1) return false;
         }
