@@ -12,20 +12,19 @@ struct Usuario {
 struct Puesto {
     int id;
     char nombreCargo[50];
-    int nivelEducacionReq;
-    int aniosExperienciaReq;
     int edadMinima;
     int edadMaxima;
+    int nivelEducacionReq;
+    int aniosExperienciaReq;
     bool activo;
 };
 
 struct Empleado {
     int dni;
-    char nombre[60];
-    char apellido[60];
+    char nombre[100];
+    int edad;
     int nivelEducacion;
     int aniosExperiencia;
-    int edad;
     bool activo;
 };
 
@@ -37,6 +36,18 @@ void menuMatchmaking();
 void iniciarSesion();
 void registrarUsuario();
 
+// Variables Globales para el Menú
+const char *opcionesMenu[] = {
+    "Salir",
+    "Iniciar Sesion",
+    "Registrar Nuevo Usuario",
+    "Gestion de Puestos (Requiere Sesion)",
+    "Gestion de Empleados (Requiere Sesion)",
+    "Matchmaking (Requiere Sesion)"
+};
+
+const int numOpciones = sizeof(opcionesMenu) / sizeof(opcionesMenu[0]); // Dividimos el total de bytes del arreglo por el tamaño de un puntero para obtener la cantidad de opciones.
+
 main()
 {
     printf("========== SISTEMA DE GESTION Y MATCHMAKING LABORAL ==========\n");
@@ -47,12 +58,10 @@ void menuPrincipal() {
     int opcion;
     do {
         printf("\n========== MENU PRINCIPAL ==========\n");
-        printf("[1]. Iniciar Sesion\n");
-        printf("[2]. Registrar Nuevo Usuario\n");
-        printf("[3]. Gestion de Puestos (Requiere Sesion)\n");
-        printf("[4]. Gestion de Empleados (Requiere Sesion)\n");
-        printf("[5]. Matchmaking (Requiere Sesion)\n");
-        printf("[0]. Salir\n");
+        for (int i = 1; i < numOpciones; i++) {
+            printf("[%d]. %s\n", i, opcionesMenu[i]);
+        }
+        printf("[0]. %s\n", opcionesMenu[0]);
         printf("==================================\n");
         printf("> Seleccione una opcion: ");
         scanf("%d", &opcion);
