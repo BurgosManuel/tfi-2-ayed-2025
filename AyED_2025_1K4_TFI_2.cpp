@@ -98,16 +98,25 @@ void menuPrincipal() {
                 registrarUsuario();
                 break;
             case 3:
-                if (sesionActiva) menuGestionPuestos();
-                else printf("Opcion no valida.\n");
+                if (sesionActiva) {
+                    menuGestionPuestos();
+                } else {
+                    printf("Opcion no valida.\n");
+                }
                 break;
             case 4:
-                if (sesionActiva) menuGestionEmpleados();
-                else printf("Opcion no valida.\n");
+                if (sesionActiva) {
+                    menuGestionEmpleados();
+                } else {
+                    printf("Opcion no valida.\n");
+                }
                 break;
             case 5:
-                 if (sesionActiva) menuMatchmaking();
-                 else printf("Opcion no valida.\n");
+                if (sesionActiva) {
+                    menuMatchmaking();
+                } else {
+                    printf("Opcion no valida.\n");
+                }
                 break;
             case 0:
                 printf("Saliendo del programa...\n");
