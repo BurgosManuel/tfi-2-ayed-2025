@@ -48,6 +48,40 @@ const char *opcionesPrincipal[] = {
 };
 const int numOpcionesPrincipal = sizeof(opcionesPrincipal) / sizeof(opcionesPrincipal[0]); // Total bytes / bytes de 1 elemento = cantidad de elementos
 
+// Opciones de menu gestion de puestos
+const char *opcionesGestionPuestos[] = {
+    "Volver",
+    "Crear archivo de Puestos",
+    "Grabar un Puesto (Alta)",
+    "Baja Logica de Puesto",
+    "Baja Fisica de Puesto",
+    "Modificar un Puesto",
+    "Listar Puestos",
+    "Consultar un Puesto"
+};
+const int numOpcionesGestionPuestos = sizeof(opcionesGestionPuestos) / sizeof(opcionesGestionPuestos[0]);
+
+// Opciones de menu gestion de empleados
+const char *opcionesGestionEmpleados[] = {
+    "Volver",
+    "Crear archivo de Empleados",
+    "Grabar un Empleado (Alta)",
+    "Baja Logica de Empleado",
+    "Baja Fisica de Empleado",
+    "Modificar un Empleado",
+    "Listar Empleados",
+    "Consultar un Empleado"
+};
+const int numOpcionesGestionEmpleados = sizeof(opcionesGestionEmpleados) / sizeof(opcionesGestionEmpleados[0]);
+
+// Opciones de menu matchmaking
+const char *opcionesMatchmaking[] = {
+    "Volver",
+    "Buscar candidatos para un puesto",
+    "Buscar puestos para un candidato"
+};
+const int numOpcionesMatchmaking = sizeof(opcionesMatchmaking) / sizeof(opcionesMatchmaking[0]);
+
 // Estado de sesión
 bool sesionActiva = false;
 
@@ -63,6 +97,28 @@ void menuPrincipal();
 void menuGestionPuestos();
 void menuGestionEmpleados();
 void menuMatchmaking();
+
+// Gestión de Puestos
+void crearArchivoPuestos();
+void altaPuesto();
+void bajaLogicaPuesto();
+void bajaFisicaPuesto();
+void modificarPuesto();
+void listarPuestos();
+void consultarPuesto();
+
+// Gestión de Empleados
+void crearArchivoEmpleados();
+void altaEmpleado();
+void bajaLogicaEmpleado();
+void bajaFisicaEmpleado();
+void modificarEmpleado();
+void listarEmpleados();
+void consultarEmpleado();
+
+// Matchmaking
+void buscarCandidatosParaPuesto();
+void buscarPuestosParaCandidato();
 
 // Gestión de Usuarios
 void cargarUsuariosEnMemoria();
@@ -154,18 +210,187 @@ void menuPrincipal() {
 }
 
 void menuGestionPuestos() {
-    printf("\n--- Gestion de Puestos (en construccion) ---\n");
-    // Logica para ABM de puestos
+    int opcion;
+    do {
+        printf("\n--- Gestion de Puestos ---\n");
+        for (int i = 1; i < numOpcionesGestionPuestos; i++) {
+            printf("[%d]. %s\n", i, opcionesGestionPuestos[i]);
+        }
+        printf("[0]. %s\n", opcionesGestionPuestos[0]);
+        printf("===========================\n");
+        printf("> Seleccione una opcion: ");
+        scanf("%d", &opcion);
+
+        switch (opcion) {
+            case 1:
+                crearArchivoPuestos();
+                break;
+            case 2:
+                altaPuesto();
+                break;
+            case 3:
+                bajaLogicaPuesto();
+                break;
+            case 4:
+                bajaFisicaPuesto();
+                break;
+            case 5:
+                modificarPuesto();
+                break;
+            case 6:
+                listarPuestos();
+                break;
+            case 7:
+                consultarPuesto();
+                break;
+            case 0:
+                break;
+            default:
+                printf("Opcion no valida. Intente de nuevo.\n");
+                break;
+        }
+    } while (opcion != 0);
 }
 
 void menuGestionEmpleados() {
-    printf("\n--- Gestion de Empleados (en construccion) ---\n");
-    // Logica para ABM de empleados
+    int opcion;
+    do {
+        printf("\n--- Gestion de Empleados ---\n");
+        for (int i = 1; i < numOpcionesGestionEmpleados; i++) {
+            printf("[%d]. %s\n", i, opcionesGestionEmpleados[i]);
+        }
+        printf("[0]. %s\n", opcionesGestionEmpleados[0]);
+        printf("=============================\n");
+        printf("> Seleccione una opcion: ");
+        scanf("%d", &opcion);
+
+        switch (opcion) {
+            case 1:
+                crearArchivoEmpleados();
+                break;
+            case 2:
+                altaEmpleado();
+                break;
+            case 3:
+                bajaLogicaEmpleado();
+                break;
+            case 4:
+                bajaFisicaEmpleado();
+                break;
+            case 5:
+                modificarEmpleado();
+                break;
+            case 6:
+                listarEmpleados();
+                break;
+            case 7:
+                consultarEmpleado();
+                break;
+            case 0:
+                break;
+            default:
+                printf("Opcion no valida. Intente de nuevo.\n");
+                break;
+        }
+    } while (opcion != 0);
 }
 
 void menuMatchmaking() {
-    printf("\n--- Matchmaking (en construccion) ---\n");
-    // Logica para generar coincidencias
+    int opcion;
+    do {
+        printf("\n--- Matchmaking ---\n");
+        for (int i = 1; i < numOpcionesMatchmaking; i++) {
+            printf("[%d]. %s\n", i, opcionesMatchmaking[i]);
+        }
+        printf("[0]. %s\n", opcionesMatchmaking[0]);
+        printf("=====================\n");
+        printf("> Seleccione una opcion: ");
+        scanf("%d", &opcion);
+
+        switch (opcion) {
+            case 1:
+                buscarCandidatosParaPuesto();
+                break;
+            case 2:
+                buscarPuestosParaCandidato();
+                break;
+            case 0:
+                break;
+            default:
+                printf("Opcion no valida. Intente de nuevo.\n");
+                break;
+        }
+    } while (opcion != 0);
+}
+
+// ========= IMPLEMENTACIÓN DE GESTIÓN DE PUESTOS ==========
+
+void crearArchivoPuestos() {
+    printf("\n--- Crear Archivo de Puestos (en construccion) ---\n");
+}
+
+void altaPuesto() {
+    printf("\n--- Grabar Puesto (Alta) (en construccion) ---\n");
+}
+
+void bajaLogicaPuesto() {
+    printf("\n--- Baja Logica de Puesto (en construccion) ---\n");
+}
+
+void bajaFisicaPuesto() {
+    printf("\n--- Baja Fisica de Puesto (en construccion) ---\n");
+}
+
+void modificarPuesto() {
+    printf("\n--- Modificar Puesto (en construccion) ---\n");
+}
+
+void listarPuestos() {
+    printf("\n--- Listar Puestos (en construccion) ---\n");
+}
+
+void consultarPuesto() {
+    printf("\n--- Consultar Puesto (en construccion) ---\n");
+}
+
+// ========= IMPLEMENTACIÓN DE GESTIÓN DE EMPLEADOS ==========
+
+void crearArchivoEmpleados() {
+    printf("\n--- Crear Archivo de Empleados (en construccion) ---\n");
+}
+
+void altaEmpleado() {
+    printf("\n--- Grabar Empleado (Alta) (en construccion) ---\n");
+}
+
+void bajaLogicaEmpleado() {
+    printf("\n--- Baja Logica de Empleado (en construccion) ---\n");
+}
+
+void bajaFisicaEmpleado() {
+    printf("\n--- Baja Fisica de Empleado (en construccion) ---\n");
+}
+
+void modificarEmpleado() {
+    printf("\n--- Modificar Empleado (en construccion) ---\n");
+}
+
+void listarEmpleados() {
+    printf("\n--- Listar Empleados (en construccion) ---\n");
+}
+
+void consultarEmpleado() {
+    printf("\n--- Consultar Empleado (en construccion) ---\n");
+}
+
+// ========= IMPLEMENTACIÓN DE MATCHMAKING ==========
+
+void buscarCandidatosParaPuesto() {
+    printf("\n--- Buscar Candidatos para Puesto (en construccion) ---\n");
+}
+
+void buscarPuestosParaCandidato() {
+    printf("\n--- Buscar Puestos para Candidato (en construccion) ---\n");
 }
 
 // ========= IMPLEMENTACIÓN DE GESTIÓN DE USUARIOS ==========
