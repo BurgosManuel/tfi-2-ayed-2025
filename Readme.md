@@ -25,6 +25,17 @@ Los datos de los usuarios se persisten en un archivo binario llamado `usuarios.d
     *   Presenta las opciones: "Gestión de Puestos", "Gestión de Empleados", "Matchmaking" y "Cerrar Sesión".
     *   Al cerrar sesión, el usuario regresa al `menuLogin()`.
 
+4.  **Submenús de Gestión (`menuGestionPuestos` y `menuGestionEmpleados`)**:
+    *   Cada uno de estos menús ofrece un conjunto completo de herramientas para la administración de sus respectivos datos (`puestos.dat` y `empleados.dat`).
+    *   Las opciones incluyen:
+        *   **Crear archivo**: Inicializa el archivo de datos correspondiente si no existe.
+        *   **Grabar (Alta)**: Añade un nuevo registro al archivo.
+        *   **Baja Lógica**: Marca un registro como inactivo sin eliminarlo del archivo.
+        *   **Baja Física**: Elimina permanentemente un registro del archivo.
+        *   **Modificar**: Permite editar los campos de un registro existente.
+        *   **Listar**: Muestra todos los registros del archivo.
+        *   **Consultar**: Busca y muestra un registro específico por su ID o DNI.
+
 ## Funcionalidades Principales
 
 ### Gestión de Usuarios
@@ -79,6 +90,6 @@ Estas funciones aseguran que los datos ingresados por el usuario cumplan con las
 
 Las siguientes funciones de menú han sido definidas pero su lógica interna aún no ha sido implementada:
 
-*   `menuGestionPuestos()`
-*   `menuGestionEmpleados()`
+*   `crearArchivoPuestos()`, `altaPuesto()`, `bajaLogicaPuesto()`, `bajaFisicaPuesto()`, `modificarPuesto()`, `listarPuestos()`, `consultarPuesto()`
+*   `crearArchivoEmpleados()`, `altaEmpleado()`, `bajaLogicaEmpleado()`, `bajaFisicaEmpleado()`, `modificarEmpleado()`, `listarEmpleados()`, `consultarEmpleado()`
 *   `menuMatchmaking()`
