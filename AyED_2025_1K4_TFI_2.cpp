@@ -2,6 +2,7 @@
 #include <string.h> // Libreria para utilizar strcmp(), strlen(), etc.
 #include <ctype.h>  // Libreria para utilizar isupper, islower, isdigit
 
+
 // ========= ENTIDADES ==========
 struct usuario {
     char user[11];
@@ -28,25 +29,6 @@ struct empleado {
     bool activo;
 };
 
-// ========== PROTOTIPO DE FUNCIONES ==========
-
-// Menús
-void menuLogin();
-void menuPrincipal();
-void menuGestionPuestos();
-void menuGestionEmpleados();
-void menuMatchmaking();
-
-// Gestión de Usuarios
-void cargarUsuariosEnMemoria();
-void guardarUsuariosEnArchivo();
-void registrarUsuario();
-void iniciarSesion();
-
-// Validaciones
-bool validarUsuario(char user[]);
-bool validarPass(char pass[]);
-
 // ========== VARIABLES GLOBALES ==========
 
 // Opciones de menu login
@@ -71,7 +53,26 @@ bool sesionActiva = false;
 
 // Usuarios
 int cantidadUsuarios = 0;
-usuario usuariosEnMemoria[100]; // Soporta hasta 100 usuarios
+usuario usuariosEnMemoria[100]; // Limitamos hasta 100 usuarios.
+
+// ========== PROTOTIPO DE FUNCIONES ==========
+
+// Menús
+void menuLogin();
+void menuPrincipal();
+void menuGestionPuestos();
+void menuGestionEmpleados();
+void menuMatchmaking();
+
+// Gestión de Usuarios
+void cargarUsuariosEnMemoria();
+void guardarUsuariosEnArchivo();
+void registrarUsuario();
+void iniciarSesion();
+
+// Validaciones
+bool validarUsuario(char user[]);
+bool validarPass(char pass[]);
 
 
 // ========= IMPLEMENTACIÓN PRINCIPAL ==========
@@ -175,7 +176,7 @@ void registrarUsuario() {
         return;
     }
 
-    usuario nuevoUsuario; // Se actualiza el tipo de la variable
+    usuario nuevoUsuario;
     printf("\n--- Registrar Nuevo Usuario ---\n");
 
     do {
@@ -195,8 +196,10 @@ void registrarUsuario() {
     } while (!validarPass(nuevoUsuario.pass));
 
     printf("Ingrese su nombre completo: ");
-    while(getchar() != '\n');
+    while(getchar() != '\n') {} // Limpiamos el buffer de manera segura
     fgets(nuevoUsuario.nombre, sizeof(nuevoUsuario.nombre), stdin);
+
+    // Reemplaza el '\n' con '\0' para terminar la cadena sin el salto de línea y no guardar datos extras.
     nuevoUsuario.nombre[strcspn(nuevoUsuario.nombre, "\n")] = 0;
 
     usuariosEnMemoria[cantidadUsuarios] = nuevoUsuario;
@@ -239,7 +242,7 @@ void cargarUsuariosEnMemoria() {
     }
 
     cantidadUsuarios = 0;
-    // Se actualiza el tipo en sizeof()
+    // No usamos feof() para evitar desbordes en la lectura.
     while(fread(&usuariosEnMemoria[cantidadUsuarios], sizeof(usuario), 1, archivo) == 1) {
         cantidadUsuarios++;
         if (cantidadUsuarios >= 100) break;
@@ -255,7 +258,6 @@ void guardarUsuariosEnArchivo() {
         return;
     }
 
-    // Se actualiza el tipo en sizeof()
     fwrite(usuariosEnMemoria, sizeof(usuario), cantidadUsuarios, archivo);
     fclose(archivo);
     printf("Se guardaron %d usuarios en 'usuarios.dat'.\n", cantidadUsuarios);
