@@ -147,6 +147,13 @@ bool esValidoNivelEducacion(int nivel);
 // ========= IMPLEMENTACIÓN PRINCIPAL ==========
 int main() {
     printf("========== SISTEMA DE GESTION Y MATCHMAKING LABORAL ==========\n");
+    printf("TRABAJO FINAL INTEGRADOR 2 - AyED 2025 1K4\n");
+    printf("Integrantes:\n");
+    printf("  - Burgos Sergio Manuel - Legajo 64522\n");
+    printf("  - Medina Ambar Yasmila Solana - Legajo 64470\n");
+    printf("  - Ruiz Tiago Gabriel - Legajo 64601\n");
+    printf("  - Santucho Thanya Sophia - Legajo 64528\n");
+    printf("===============================================================\n");
     cargarUsuariosEnMemoria();
     menuLogin(); // El programa comienza en el menú de login
     guardarUsuariosEnArchivo(); // Guardar cambios al salir
