@@ -131,6 +131,9 @@ void iniciarSesion();
 // Validaciones
 bool validarUsuario(char user[]);
 bool validarPass(char pass[]);
+bool esValidaEdad(int edad);
+bool esValidaExperiencia(int anios);
+bool esValidoNivelEducacion(int nivel);
 
 
 // ========= IMPLEMENTACIÓN PRINCIPAL ==========
@@ -417,38 +420,36 @@ void altaPuesto() {
     do {
         printf("Ingrese Edad Minima requerida (18-65): ");
         scanf("%d", &nuevoPuesto.edadMinima);
-        printf("Ingrese Edad Maxima requerida (18-65): ");
-        scanf("%d", &nuevoPuesto.edadMaxima);
-
-        // Validar rango de edad laboral (18 a 65, antes de jubilación)
-        if (nuevoPuesto.edadMinima < 18 || nuevoPuesto.edadMinima > 65) {
+        if (!esValidaEdad(nuevoPuesto.edadMinima)) {
             printf("Error: La edad minima debe estar entre 18 y 65.\n");
-        } else if (nuevoPuesto.edadMaxima < 18 || nuevoPuesto.edadMaxima > 65) {
-            printf("Error: La edad maxima debe estar entre 18 y 65.\n");
-        } else if (nuevoPuesto.edadMinima > nuevoPuesto.edadMaxima) {
-            printf("Error: La edad minima no puede ser mayor a la maxima.\n");
         }
-    } while (nuevoPuesto.edadMinima < 18 || nuevoPuesto.edadMinima > 65 ||
-             nuevoPuesto.edadMaxima < 18 || nuevoPuesto.edadMaxima > 65 ||
-             nuevoPuesto.edadMinima > nuevoPuesto.edadMaxima);
+    } while (!esValidaEdad(nuevoPuesto.edadMinima));
+
+    do {
+        printf("Ingrese Edad Maxima requerida (%d-65): ", nuevoPuesto.edadMinima);
+        scanf("%d", &nuevoPuesto.edadMaxima);
+        if (!esValidaEdad(nuevoPuesto.edadMaxima) || nuevoPuesto.edadMaxima < nuevoPuesto.edadMinima) {
+            printf("Error: La edad maxima debe estar entre %d y 65.\n", nuevoPuesto.edadMinima);
+        }
+    } while (!esValidaEdad(nuevoPuesto.edadMaxima) || nuevoPuesto.edadMaxima < nuevoPuesto.edadMinima);
 
     // --- Validación de Nivel de Educación (1-5) ---
     do {
         printf("Nivel de Educacion (1-Primaria, 2-Secundaria, 3-Terciaria, 4-Grado, 5-Posgrado): ");
         scanf("%d", &nuevoPuesto.nivelEducacionReq);
-        if (nuevoPuesto.nivelEducacionReq < 1 || nuevoPuesto.nivelEducacionReq > 5) {
+        if (!esValidoNivelEducacion(nuevoPuesto.nivelEducacionReq)) {
             printf("Error: El nivel de educacion debe estar entre 1 y 5.\n");
         }
-    } while (nuevoPuesto.nivelEducacionReq < 1 || nuevoPuesto.nivelEducacionReq > 5);
+    } while (!esValidoNivelEducacion(nuevoPuesto.nivelEducacionReq));
 
     // --- Validación de Años de Experiencia (0-100) ---
     do {
         printf("Anios de Experiencia requeridos (0-100): ");
         scanf("%d", &nuevoPuesto.aniosExperienciaReq);
-        if (nuevoPuesto.aniosExperienciaReq < 0 || nuevoPuesto.aniosExperienciaReq > 100) {
+        if (!esValidaExperiencia(nuevoPuesto.aniosExperienciaReq)) {
             printf("Error: Los anios de experiencia deben estar entre 0 y 100.\n");
         }
-    } while (nuevoPuesto.aniosExperienciaReq < 0 || nuevoPuesto.aniosExperienciaReq > 100);
+    } while (!esValidaExperiencia(nuevoPuesto.aniosExperienciaReq));
 
     // --- Estado Inicial ---
     nuevoPuesto.activo = true;
@@ -531,15 +532,144 @@ void bajaFisicaPuesto() {
 }
 
 void modificarPuesto() {
-    printf("\n--- Modificar Puesto (en construccion) ---\n");
+    FILE *fp = fopen("puestos.dat", "r+b");
+    if (fp == NULL) {
+        printf("Error al abrir el archivo de puestos.\n");
+        return;
+    }
+
+    int id;
+    puesto p;
+    bool encontrado = false;
+
+    printf("Ingrese el ID del puesto a modificar: ");
+    scanf("%d", &id);
+
+    while (fread(&p, sizeof(puesto), 1, fp)) {
+        if (p.id == id && p.activo) {
+            encontrado = true;
+
+            printf("\n--- Modificando Puesto ID %d ---\n", p.id);
+
+            printf("Nuevo nombre del cargo: ");
+            while (getchar() != '\n');
+            fgets(p.nombreCargo, sizeof(p.nombreCargo), stdin);
+            p.nombreCargo[strcspn(p.nombreCargo, "\n")] = 0;
+
+            // Validacion de Edad Minima (18-65)
+            do {
+                printf("Nueva edad minima (18-65): ");
+                scanf("%d", &p.edadMinima);
+                if (!esValidaEdad(p.edadMinima)) {
+                    printf("Error: La edad minima debe estar entre 18 y 65.\n");
+                }
+            } while (!esValidaEdad(p.edadMinima));
+
+            // Validacion de Edad Maxima (>= edadMinima y <= 65)
+            do {
+                printf("Nueva edad maxima (%d-65): ", p.edadMinima);
+                scanf("%d", &p.edadMaxima);
+                if (!esValidaEdad(p.edadMaxima) || p.edadMaxima < p.edadMinima) {
+                    printf("Error: La edad maxima debe estar entre %d y 65.\n", p.edadMinima);
+                }
+            } while (!esValidaEdad(p.edadMaxima) || p.edadMaxima < p.edadMinima);
+
+            // Validacion de Nivel Educativo (1-5)
+            do {
+                printf("Nuevo nivel educativo requerido (1-5): ");
+                scanf("%d", &p.nivelEducacionReq);
+                if (!esValidoNivelEducacion(p.nivelEducacionReq)) {
+                    printf("Error: El nivel de educacion debe estar entre 1 y 5.\n");
+                }
+            } while (!esValidoNivelEducacion(p.nivelEducacionReq));
+
+            // Validacion de Anios de Experiencia (0-100)
+            do {
+                printf("Nuevos anios de experiencia requeridos (0-100): ");
+                scanf("%d", &p.aniosExperienciaReq);
+                if (!esValidaExperiencia(p.aniosExperienciaReq)) {
+                    printf("Error: Los anios de experiencia deben estar entre 0 y 100.\n");
+                }
+            } while (!esValidaExperiencia(p.aniosExperienciaReq));
+
+            fseek(fp, -sizeof(puesto), SEEK_CUR);
+            fwrite(&p, sizeof(puesto), 1, fp);
+
+            printf("Puesto modificado correctamente.\n");
+            break;
+        }
+    }
+
+    if (!encontrado)
+        printf("Puesto no encontrado o inactivo.\n");
+
+    fclose(fp);
 }
 
 void listarPuestos() {
-    printf("\n--- Listar Puestos (en construccion) ---\n");
+    FILE *fp = fopen("puestos.dat", "rb");
+    if (fp == NULL) {
+        printf("No existe el archivo de puestos.\n");
+        return;
+    }
+
+    puesto p;
+    bool hayRegistros = false;
+
+    printf("\n--- LISTADO DE PUESTOS ACTIVOS ---\n");
+
+    while (fread(&p, sizeof(puesto), 1, fp)) {
+        if (p.activo) {
+            hayRegistros = true;
+            printf("\nID: %d", p.id);
+            printf("\nCargo: %s", p.nombreCargo);
+            printf("\nEdad Minima: %d", p.edadMinima);
+            printf("\nEdad Maxima: %d", p.edadMaxima);
+            printf("\nNivel Educativo: %d", p.nivelEducacionReq);
+            printf("\nExperiencia: %d anios\n", p.aniosExperienciaReq);
+        }
+    }
+
+    if (!hayRegistros) {
+        printf("No hay puestos activos registrados.\n");
+    }
+
+    fclose(fp);
 }
 
 void consultarPuesto() {
-    printf("\n--- Consultar Puesto (en construccion) ---\n");
+    FILE *fp = fopen("puestos.dat", "rb");
+    if (fp == NULL) {
+        printf("No existe el archivo de puestos.\n");
+        return;
+    }
+
+    int id;
+    puesto p;
+    bool encontrado = false;
+
+    printf("Ingrese el ID del puesto a consultar: ");
+    scanf("%d", &id);
+
+    while (fread(&p, sizeof(puesto), 1, fp)) {
+        if (p.id == id && p.activo) {
+            encontrado = true;
+
+            printf("\n--- PUESTO ENCONTRADO ---\n");
+            printf("ID: %d\n", p.id);
+            printf("Cargo: %s\n", p.nombreCargo);
+            printf("Edad Minima: %d\n", p.edadMinima);
+            printf("Edad Maxima: %d\n", p.edadMaxima);
+            printf("Nivel Educativo: %d\n", p.nivelEducacionReq);
+            printf("Experiencia: %d anios\n", p.aniosExperienciaReq);
+            break;
+        }
+    }
+
+    if (!encontrado)
+        printf("Puesto no encontrado o inactivo.\n");
+
+    fclose(fp);
 }
 
 // ========= IMPLEMENTACIÓN DE GESTIÓN DE EMPLEADOS ==========
@@ -602,28 +732,28 @@ void altaEmpleado() {
     do {
         printf("Ingrese Edad (18-65): ");
         scanf("%d", &nuevoEmp.edad);
-        if (nuevoEmp.edad < 18 || nuevoEmp.edad > 65) {
+        if (!esValidaEdad(nuevoEmp.edad)) {
             printf("Error: La edad debe estar entre 18 y 65 (edad laboral).\n");
         }
-    } while (nuevoEmp.edad < 18 || nuevoEmp.edad > 65);
+    } while (!esValidaEdad(nuevoEmp.edad));
 
     // --- Validación de Nivel de Educación (1-5) ---
     do {
         printf("Nivel de Educacion (1-Primaria, 2-Secundaria, 3-Terciaria, 4-Grado, 5-Posgrado): ");
         scanf("%d", &nuevoEmp.nivelEducacion);
-        if (nuevoEmp.nivelEducacion < 1 || nuevoEmp.nivelEducacion > 5) {
+        if (!esValidoNivelEducacion(nuevoEmp.nivelEducacion)) {
             printf("Error: El nivel de educacion debe estar entre 1 y 5.\n");
         }
-    } while (nuevoEmp.nivelEducacion < 1 || nuevoEmp.nivelEducacion > 5);
+    } while (!esValidoNivelEducacion(nuevoEmp.nivelEducacion));
 
     // --- Validación de Años de Experiencia (0-100) ---
     do {
         printf("Anios de Experiencia (0-100): ");
         scanf("%d", &nuevoEmp.aniosExperiencia);
-        if (nuevoEmp.aniosExperiencia < 0 || nuevoEmp.aniosExperiencia > 100) {
+        if (!esValidaExperiencia(nuevoEmp.aniosExperiencia)) {
             printf("Error: Los anios de experiencia deben estar entre 0 y 100.\n");
         }
-    } while (nuevoEmp.aniosExperiencia < 0 || nuevoEmp.aniosExperiencia > 100);
+    } while (!esValidaExperiencia(nuevoEmp.aniosExperiencia));
 
     // --- Estado Inicial ---
     nuevoEmp.activo = true;
@@ -707,15 +837,133 @@ void bajaFisicaEmpleado() {
 
 
 void modificarEmpleado() {
-    printf("\n--- Modificar Empleado (en construccion) ---\n");
+    FILE *fp = fopen("empleados.dat", "rb+");
+    if (fp == NULL) {
+        printf("Error al abrir el archivo de empleados.\n");
+        return;
+    }
+
+    int dni;
+    empleado e;
+    bool encontrado = false;
+
+    printf("Ingrese el DNI del empleado a modificar: ");
+    scanf("%d", &dni);
+
+    while (fread(&e, sizeof(empleado), 1, fp)) {
+        if (e.dni == dni && e.activo) {
+            encontrado = true;
+
+            printf("\n--- Modificando Empleado DNI %d ---\n", e.dni);
+
+            printf("Nuevo nombre: ");
+            while (getchar() != '\n');
+            fgets(e.nombre, sizeof(e.nombre), stdin);
+            e.nombre[strcspn(e.nombre, "\n")] = 0;
+
+            // Validacion de Edad (18-65)
+            do {
+                printf("Nueva edad (18-65): ");
+                scanf("%d", &e.edad);
+                if (!esValidaEdad(e.edad)) {
+                    printf("Error: La edad debe estar entre 18 y 65.\n");
+                }
+            } while (!esValidaEdad(e.edad));
+
+            // Validacion de Nivel Educativo (1-5)
+            do {
+                printf("Nuevo nivel educativo (1-5): ");
+                scanf("%d", &e.nivelEducacion);
+                if (!esValidoNivelEducacion(e.nivelEducacion)) {
+                    printf("Error: El nivel de educacion debe estar entre 1 y 5.\n");
+                }
+            } while (!esValidoNivelEducacion(e.nivelEducacion));
+
+            // Validacion de Anios de Experiencia (0-100)
+            do {
+                printf("Nuevos anios de experiencia (0-100): ");
+                scanf("%d", &e.aniosExperiencia);
+                if (!esValidaExperiencia(e.aniosExperiencia)) {
+                    printf("Error: Los anios de experiencia deben estar entre 0 y 100.\n");
+                }
+            } while (!esValidaExperiencia(e.aniosExperiencia));
+
+            fseek(fp, -sizeof(empleado), SEEK_CUR);
+            fwrite(&e, sizeof(empleado), 1, fp);
+
+            printf("Empleado modificado correctamente.\n");
+            break;
+        }
+    }
+
+    if (!encontrado)
+        printf("Empleado no encontrado o inactivo.\n");
+
+    fclose(fp);
 }
 
 void listarEmpleados() {
-    printf("\n--- Listar Empleados (en construccion) ---\n");
+    FILE *fp = fopen("empleados.dat", "rb");
+    if (fp == NULL) {
+        printf("No existe el archivo de empleados.\n");
+        return;
+    }
+
+    empleado e;
+    bool hayRegistros = false;
+
+    printf("\n--- LISTADO DE EMPLEADOS ACTIVOS ---\n");
+
+    while (fread(&e, sizeof(empleado), 1, fp)) {
+        if (e.activo) {
+            hayRegistros = true;
+            printf("\nDNI: %d", e.dni);
+            printf("\nNombre: %s", e.nombre);
+            printf("\nEdad: %d", e.edad);
+            printf("\nNivel Educativo: %d", e.nivelEducacion);
+            printf("\nExperiencia: %d anios\n", e.aniosExperiencia);
+        }
+    }
+
+    if (!hayRegistros) {
+        printf("No hay empleados activos registrados.\n");
+    }
+
+    fclose(fp);
 }
 
 void consultarEmpleado() {
-    printf("\n--- Consultar Empleado (en construccion) ---\n");
+    FILE *fp = fopen("empleados.dat", "rb");
+    if (fp == NULL) {
+        printf("No existe el archivo de empleados.\n");
+        return;
+    }
+
+    int dni;
+    empleado e;
+    bool encontrado = false;
+
+    printf("Ingrese el DNI del empleado a consultar: ");
+    scanf("%d", &dni);
+
+    while (fread(&e, sizeof(empleado), 1, fp)) {
+        if (e.dni == dni && e.activo) {
+            encontrado = true;
+
+            printf("\n--- EMPLEADO ENCONTRADO ---\n");
+            printf("DNI: %d\n", e.dni);
+            printf("Nombre: %s\n", e.nombre);
+            printf("Edad: %d\n", e.edad);
+            printf("Nivel Educativo: %d\n", e.nivelEducacion);
+            printf("Experiencia: %d anios\n", e.aniosExperiencia);
+            break;
+        }
+    }
+
+    if (!encontrado)
+        printf("Empleado no encontrado o inactivo.\n");
+
+    fclose(fp);
 }
 
 // ========= IMPLEMENTACIÓN DE MATCHMAKING ==========
@@ -897,3 +1145,19 @@ bool validarPass(char pass[]) {
     // a. Deberá contener al menos una letra mayúscula, una letra minúscula y un número.
     return tieneMayuscula && tieneMinuscula && tieneNumero;
 }
+
+// Valida que la edad esté en el rango laboral (18-65)
+bool esValidaEdad(int edad) {
+    return edad >= 18 && edad <= 65;
+}
+
+// Valida que los años de experiencia estén en rango válido (0-100)
+bool esValidaExperiencia(int anios) {
+    return anios >= 0 && anios <= 100;
+}
+
+// Valida que el nivel de educación esté entre 1 y 5
+bool esValidoNivelEducacion(int nivel) {
+    return nivel >= 1 && nivel <= 5;
+}
+
