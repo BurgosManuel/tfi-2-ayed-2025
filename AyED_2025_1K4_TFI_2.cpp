@@ -15,7 +15,7 @@ struct puesto {
     char nombreCargo[50];
     int edadMinima;
     int edadMaxima;
-    int nivelEducacionReq;
+    int nivelEducacionReq; // 1: Primaria, 2: Secundaria, 3: Terciaria, 4: Grado, 5: Posgrado
     int aniosExperienciaReq;
     bool activo;
 };
@@ -24,7 +24,7 @@ struct empleado {
     int dni;
     char nombre[100];
     int edad;
-    int nivelEducacion;
+    int nivelEducacion; // 1: Primaria, 2: Secundaria, 3: Terciaria, 4: Grado, 5: Posgrado
     int aniosExperiencia;
     bool activo;
 };
@@ -115,6 +115,8 @@ void bajaFisicaEmpleado();
 void modificarEmpleado();
 void listarEmpleados();
 void consultarEmpleado();
+
+void crearArchivo(const char *nombreArchivo);
 
 // Matchmaking
 void buscarCandidatosParaPuesto();
@@ -322,15 +324,142 @@ void menuMatchmaking() {
         }
     } while (opcion != 0);
 }
+// Función para crear archivos
+void crearArchivo(const char *nombreArchivo) {
+    FILE *archivo;
+    char confirmacion;
+
+    printf("\n--- Crear Archivo: %s ---\n", nombreArchivo);
+
+    // 1. Verificación: ¿Ya existe?
+    archivo = fopen(nombreArchivo, "rb");
+    if (archivo != NULL) {
+        fclose(archivo);
+        printf("ATENCION: El archivo '%s' ya existe.\n", nombreArchivo);
+        printf("Si continua, se SOBRESCRIBIRA (se borraran los datos viejos).\n");
+        printf("Desea continuar? (s/n): ");
+        scanf(" %c", &confirmacion);
+
+        if (confirmacion != 's' && confirmacion != 'S') {
+            printf("Operacion cancelada.\n");
+            return;
+        }
+    }
+
+    // 2. Creación: Modo "wb" (escritura binaria)
+    archivo = fopen(nombreArchivo, "wb");
+
+    if (archivo == NULL) {
+        printf("Error: No se pudo crear el archivo '%s'.\n", nombreArchivo);
+    } else {
+        printf("Archivo '%s' creado exitosamente.\n", nombreArchivo);
+        fclose(archivo);
+    }
+}
 
 // ========= IMPLEMENTACIÓN DE GESTIÓN DE PUESTOS ==========
 
 void crearArchivoPuestos() {
-    printf("\n--- Crear Archivo de Puestos (en construccion) ---\n");
+    crearArchivo("puestos.dat");
+}
+
+// 2. Función auxiliar para verificar ID duplicado
+bool existeIdPuesto(int id) {
+    FILE *archivo = fopen("puestos.dat", "rb");
+    puesto p;
+
+    // Si no existe el archivo, no hay duplicados
+    if (archivo == NULL) return false;
+
+    while (fread(&p, sizeof(struct puesto), 1, archivo)) {
+        if (p.id == id) {
+            fclose(archivo);
+            return true;
+        }
+    }
+
+    fclose(archivo);
+    return false;
 }
 
 void altaPuesto() {
-    printf("\n--- Grabar Puesto (Alta) (en construccion) ---\n");
+    puesto nuevoPuesto;
+    FILE *archivo;
+
+    printf("\n--- Grabar Nuevo Puesto (Alta) ---\n");
+
+    // --- Validación de existencia del archivo ---
+    // Usamos r+b para verificar existencia y luego escribir sin reabrir
+    archivo = fopen("puestos.dat", "r+b");
+    if (archivo == NULL) {
+        printf("Error: El archivo 'puestos.dat' no existe. Debe crearlo primero.\n");
+        return;
+    }
+
+    // --- Validación de ID ---
+    printf("Ingrese ID del puesto (numero entero): ");
+    scanf("%d", &nuevoPuesto.id);
+
+    if (existeIdPuesto(nuevoPuesto.id)) {
+        printf("Error: El ID %d ya existe en el sistema.\n", nuevoPuesto.id);
+        fclose(archivo); // Cerramos el archivo antes de salir
+        return;
+    }
+
+    // --- Carga de String (Nombre) ---
+    printf("Ingrese nombre del cargo: ");
+    while(getchar() != '\n'); // Limpia el buffer del teclado
+    fgets(nuevoPuesto.nombreCargo, sizeof(nuevoPuesto.nombreCargo), stdin);
+    // Elimina el salto de línea al final
+    nuevoPuesto.nombreCargo[strcspn(nuevoPuesto.nombreCargo, "\n")] = 0;
+
+    // --- Validaciones de Lógica (Edades) ---
+    do {
+        printf("Ingrese Edad Minima requerida (18-65): ");
+        scanf("%d", &nuevoPuesto.edadMinima);
+        printf("Ingrese Edad Maxima requerida (18-65): ");
+        scanf("%d", &nuevoPuesto.edadMaxima);
+
+        // Validar rango de edad laboral (18 a 65, antes de jubilación)
+        if (nuevoPuesto.edadMinima < 18 || nuevoPuesto.edadMinima > 65) {
+            printf("Error: La edad minima debe estar entre 18 y 65.\n");
+        } else if (nuevoPuesto.edadMaxima < 18 || nuevoPuesto.edadMaxima > 65) {
+            printf("Error: La edad maxima debe estar entre 18 y 65.\n");
+        } else if (nuevoPuesto.edadMinima > nuevoPuesto.edadMaxima) {
+            printf("Error: La edad minima no puede ser mayor a la maxima.\n");
+        }
+    } while (nuevoPuesto.edadMinima < 18 || nuevoPuesto.edadMinima > 65 ||
+             nuevoPuesto.edadMaxima < 18 || nuevoPuesto.edadMaxima > 65 ||
+             nuevoPuesto.edadMinima > nuevoPuesto.edadMaxima);
+
+    // --- Validación de Nivel de Educación (1-5) ---
+    do {
+        printf("Nivel de Educacion (1-Primaria, 2-Secundaria, 3-Terciaria, 4-Grado, 5-Posgrado): ");
+        scanf("%d", &nuevoPuesto.nivelEducacionReq);
+        if (nuevoPuesto.nivelEducacionReq < 1 || nuevoPuesto.nivelEducacionReq > 5) {
+            printf("Error: El nivel de educacion debe estar entre 1 y 5.\n");
+        }
+    } while (nuevoPuesto.nivelEducacionReq < 1 || nuevoPuesto.nivelEducacionReq > 5);
+
+    // --- Validación de Años de Experiencia (0-100) ---
+    do {
+        printf("Anios de Experiencia requeridos (0-100): ");
+        scanf("%d", &nuevoPuesto.aniosExperienciaReq);
+        if (nuevoPuesto.aniosExperienciaReq < 0 || nuevoPuesto.aniosExperienciaReq > 100) {
+            printf("Error: Los anios de experiencia deben estar entre 0 y 100.\n");
+        }
+    } while (nuevoPuesto.aniosExperienciaReq < 0 || nuevoPuesto.aniosExperienciaReq > 100);
+
+    // --- Estado Inicial ---
+    nuevoPuesto.activo = true;
+
+    // --- Guardado en Disco ---
+    // Movemos el puntero al final del archivo para añadir el nuevo registro
+    fseek(archivo, 0, SEEK_END);
+    fwrite(&nuevoPuesto, sizeof(struct puesto), 1, archivo);
+    fclose(archivo);
+
+    printf("\n>> Puesto '%s' (ID: %d) registrado exitosamente.\n", nuevoPuesto.nombreCargo, nuevoPuesto.id);
 }
 
 void bajaLogicaPuesto() {
@@ -356,11 +485,96 @@ void consultarPuesto() {
 // ========= IMPLEMENTACIÓN DE GESTIÓN DE EMPLEADOS ==========
 
 void crearArchivoEmpleados() {
-    printf("\n--- Crear Archivo de Empleados (en construccion) ---\n");
+    crearArchivo("empleados.dat");
+}
+
+// 2. Función auxiliar para validar DNI duplicado
+bool existeDniEmpleado(int dni) {
+    FILE *archivo = fopen("empleados.dat", "rb");
+    empleado e;
+
+    // Si no existe el archivo, no hay duplicados
+    if (archivo == NULL) return false;
+
+    while (fread(&e, sizeof(struct empleado), 1, archivo)) {
+        if (e.dni == dni) {
+            fclose(archivo);
+            return true;
+        }
+    }
+
+    fclose(archivo);
+    return false;
 }
 
 void altaEmpleado() {
-    printf("\n--- Grabar Empleado (Alta) (en construccion) ---\n");
+    empleado nuevoEmp;
+    FILE *archivo;
+
+    printf("\n--- Grabar Nuevo Empleado (Alta) ---\n");
+
+    // --- Validación de existencia del archivo ---
+    // Usamos r+b para verificar existencia y luego escribir sin reabrir
+    archivo = fopen("empleados.dat", "r+b");
+    if (archivo == NULL) {
+        printf("Error: El archivo 'empleados.dat' no existe. Debe crearlo primero.\n");
+        return;
+    }
+
+    // --- Validación de DNI ---
+    printf("Ingrese DNI (sin puntos): ");
+    scanf("%d", &nuevoEmp.dni);
+
+    if (existeDniEmpleado(nuevoEmp.dni)) {
+        printf("Error: El DNI %d ya esta registrado en el sistema.\n", nuevoEmp.dni);
+        fclose(archivo); // Cerramos el archivo antes de salir
+        return;
+    }
+
+    // --- Carga de Nombre ---
+    printf("Ingrese Nombre y Apellido: ");
+    while(getchar() != '\n'); // Limpia el buffer del teclado (el Enter del dni)
+    fgets(nuevoEmp.nombre, sizeof(nuevoEmp.nombre), stdin);
+    // Elimina el salto de línea al final
+    nuevoEmp.nombre[strcspn(nuevoEmp.nombre, "\n")] = 0;
+
+    // --- Validación de Edad (rango laboral 18-65) ---
+    do {
+        printf("Ingrese Edad (18-65): ");
+        scanf("%d", &nuevoEmp.edad);
+        if (nuevoEmp.edad < 18 || nuevoEmp.edad > 65) {
+            printf("Error: La edad debe estar entre 18 y 65 (edad laboral).\n");
+        }
+    } while (nuevoEmp.edad < 18 || nuevoEmp.edad > 65);
+
+    // --- Validación de Nivel de Educación (1-5) ---
+    do {
+        printf("Nivel de Educacion (1-Primaria, 2-Secundaria, 3-Terciaria, 4-Grado, 5-Posgrado): ");
+        scanf("%d", &nuevoEmp.nivelEducacion);
+        if (nuevoEmp.nivelEducacion < 1 || nuevoEmp.nivelEducacion > 5) {
+            printf("Error: El nivel de educacion debe estar entre 1 y 5.\n");
+        }
+    } while (nuevoEmp.nivelEducacion < 1 || nuevoEmp.nivelEducacion > 5);
+
+    // --- Validación de Años de Experiencia (0-100) ---
+    do {
+        printf("Anios de Experiencia (0-100): ");
+        scanf("%d", &nuevoEmp.aniosExperiencia);
+        if (nuevoEmp.aniosExperiencia < 0 || nuevoEmp.aniosExperiencia > 100) {
+            printf("Error: Los anios de experiencia deben estar entre 0 y 100.\n");
+        }
+    } while (nuevoEmp.aniosExperiencia < 0 || nuevoEmp.aniosExperiencia > 100);
+
+    // --- Estado Inicial ---
+    nuevoEmp.activo = true;
+
+    // --- Guardado en Disco ---
+    // Movemos el puntero al final del archivo para añadir el nuevo registro
+    fseek(archivo, 0, SEEK_END);
+    fwrite(&nuevoEmp, sizeof(struct empleado), 1, archivo);
+    fclose(archivo);
+
+    printf("\n>> Empleado '%s' (DNI: %d) registrado exitosamente.\n", nuevoEmp.nombre, nuevoEmp.dni);
 }
 
 void bajaLogicaEmpleado() {
