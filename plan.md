@@ -1,4 +1,3 @@
-
 # 🚀 PROYECTO: Sistema de Gestión y Matchmaking Laboral (TFI AyED 2025)
 
 ## 🎯 1. OBJETIVO
@@ -23,7 +22,7 @@ Según el documento de consignas, el manejo de archivos tiene dos comportamiento
 
 ### A. Estructura de Usuario
 ```cpp
-struct Usuario {
+struct usuario {
     char user[11];      // Max 10 chars. Reglas de validación estrictas (PDF 1).
     char pass[33];      // Max 32 chars. Reglas de validación estrictas (PDF 1).
     char nombre[60];    // Nombre del operador.
@@ -32,27 +31,26 @@ struct Usuario {
 
 ### B. Estructura de Puesto (Vacante)
 ```cpp
-struct Puesto {
+struct puesto {
     int id;
     char nombreCargo[50];
-    int nivelEducacionReq;      // 1:Primario ... 5:Posgrado
-    int aniosExperienciaReq;    // Mínimo de años
-    int edadMinima;             // Rango inferior
-    int edadMaxima;             // Rango superior
+    int edadMinima;             // Rango inferior (18-65)
+    int edadMaxima;             // Rango superior (18-65)
+    int nivelEducacionReq;      // 1:Primaria, 2:Secundaria, 3:Terciaria, 4:Grado, 5:Posgrado
+    int aniosExperienciaReq;    // Mínimo de años (0-100)
     bool activo;                // Para baja lógica
 };
 ```
 
 ### C. Estructura de Empleado (Candidato)
 ```cpp
-struct Empleado {
+struct empleado {
     int dni;
-    char nombre[60];
-    char apellido[60];
-    int nivelEducacion;
-    int aniosExperiencia;
-    int edad;
-    bool activo;
+    char nombre[100];
+    int edad;                   // Rango laboral (18-65)
+    int nivelEducacion;         // 1:Primaria, 2:Secundaria, 3:Terciaria, 4:Grado, 5:Posgrado
+    int aniosExperiencia;       // 0-100 años
+    bool activo;                // Para baja lógica
 };
 ```
 
@@ -69,7 +67,7 @@ La función `generarMatch` comparará un Puesto contra la lista de Empleados. Es
 ## 🗺️ 6. HOJA DE RUTA (ROADMAP)
 
 ### Fase 1: ✅ Configuración y Autenticación (COMPLETADA)
-*   [x] Definir `struct Usuario`, `Puesto`, `Empleado`.
+*   [x] Definir `struct usuario`, `puesto`, `empleado`.
 *   [x] Definir constantes de archivos.
 *   [x] Función `cargarUsuariosMemoria()`: Lee `usuarios.dat` a un array en memoria.
 *   [x] Función `guardarUsuariosArchivo()`: Escribe el array de memoria a `usuarios.dat` al salir.
@@ -78,28 +76,42 @@ La función `generarMatch` comparará un Puesto contra la lista de Empleados. Es
 *   [x] Implementar lectura segura de cadenas con `fgets` y limpieza de buffer.
 *   [x] Implementar menú de login y menú principal post-autenticación.
 
-### Fase 2: ⏳ Módulo de Gestión de Puestos (EN PROGRESO)
-*   [ ] Actualizar `menuGestionPuestos` para incluir las nuevas opciones.
-*   [ ] Implementar `crearArchivoPuestos()`: Crea el archivo `puestos.dat` si no existe.
-*   [ ] Implementar `altaPuesto()` (Grabar): Pide datos, valida y añade un nuevo puesto al archivo.
-*   [ ] Implementar `bajaLogicaPuesto()`: Busca un puesto por ID y establece su campo `activo` a `false`.
-*   [ ] Implementar `bajaFisicaPuesto()`: Elimina permanentemente un registro del archivo (requiere crear un archivo temporal).
+### Fase 2: ✅ Módulo de Gestión de Puestos (COMPLETADA)
+*   [x] Actualizar `menuGestionPuestos` para incluir las nuevas opciones.
+*   [x] Implementar `crearArchivoPuestos()`: Crea el archivo `puestos.dat` (con confirmación si ya existe).
+*   [x] Implementar `altaPuesto()` (Grabar):
+    *   [x] Validación de existencia del archivo al inicio (modo `r+b`).
+    *   [x] Validación de ID duplicado con `existeIdPuesto()`.
+    *   [x] Validación de edades (rango 18-65).
+    *   [x] Validación de nivel de educación (1-5).
+    *   [x] Validación de años de experiencia (0-100).
+    *   [x] Uso de `fseek()` para posicionar al final y escribir.
+    *   [x] Cierre correcto del archivo en todos los casos de salida.
+*   [x] Implementar `bajaLogicaPuesto()`: Busca por ID y establece `activo = false`.
+*   [x] Implementar `bajaFisicaPuesto()`: Elimina permanentemente usando archivo auxiliar.
 *   [ ] Implementar `modificarPuesto()`: Busca un puesto por ID y permite editar sus campos.
 *   [ ] Implementar `listarPuestos()`: Lee y muestra todos los registros de `puestos.dat`.
-*   [ ] Implementar `consultarPuesto()`: Pide un ID y muestra la información detallada de ese puesto.
+*   [ ] Implementar `consultarPuesto()`: Pide un ID y muestra la información detallada.
 
-### Fase 3: 👨‍💼 Módulo de Gestión de Empleados
-*   [ ] Actualizar `menuGestionEmpleados` para incluir las nuevas opciones.
-*   [ ] Implementar `crearArchivoEmpleados()`: Crea el archivo `empleados.dat` si no existe.
-*   [ ] Implementar `altaEmpleado()` (Grabar): Pide datos, valida y añade un nuevo empleado al archivo.
-*   [ ] Implementar `bajaLogicaEmpleado()`: Busca un empleado por DNI y establece su campo `activo` a `false`.
-*   [ ] Implementar `bajaFisicaEmpleado()`: Elimina permanentemente un registro del archivo (requiere crear un archivo temporal).
+### Fase 3: ✅ Módulo de Gestión de Empleados (COMPLETADA)
+*   [x] Actualizar `menuGestionEmpleados` para incluir las nuevas opciones.
+*   [x] Implementar `crearArchivoEmpleados()`: Crea el archivo `empleados.dat` (con confirmación si ya existe).
+*   [x] Implementar `altaEmpleado()` (Grabar):
+    *   [x] Validación de existencia del archivo al inicio (modo `r+b`).
+    *   [x] Validación de DNI duplicado con `existeDniEmpleado()`.
+    *   [x] Validación de edad (rango 18-65).
+    *   [x] Validación de nivel de educación (1-5).
+    *   [x] Validación de años de experiencia (0-100).
+    *   [x] Uso de `fseek()` para posicionar al final y escribir.
+    *   [x] Cierre correcto del archivo en todos los casos de salida.
+*   [x] Implementar `bajaLogicaEmpleado()`: Busca por DNI y establece `activo = false`.
+*   [x] Implementar `bajaFisicaEmpleado()`: Elimina permanentemente usando archivo auxiliar.
 *   [ ] Implementar `modificarEmpleado()`: Busca un empleado por DNI y permite editar sus campos.
 *   [ ] Implementar `listarEmpleados()`: Lee y muestra todos los registros de `empleados.dat`.
-*   [ ] Implementar `consultarEmpleado()`: Pide un DNI y muestra la información detallada de ese empleado.
+*   [ ] Implementar `consultarEmpleado()`: Pide un DNI y muestra la información detallada.
 
-### Fase 4: 🤝 Módulo de Matchmaking
-*   [ ] Crear el submenú `menuMatchmaking` con las opciones: "Buscar candidatos para un puesto" y "Buscar puestos para un candidato".
+### Fase 4: ⏳ Módulo de Matchmaking (EN PROGRESO)
+*   [x] Crear el submenú `menuMatchmaking` con las opciones.
 
 *   [ ] Implementar `buscarCandidatosParaPuesto()`:
     *   Solicitar al usuario el ID del puesto.
@@ -130,35 +142,64 @@ La función `generarMatch` comparará un Puesto contra la lista de Empleados. Es
     *   Recorrer la lista enlazada y mostrar los datos de los empleados, por ejemplo, ordenados por DNI o experiencia.
     *   (Opcional) Implementar un reporte que muestre estadísticas, como el promedio de edad o el nivel educativo más común.
 
-## 💡 7. RECOMENDACIONES PARA EL EQUIPO DE DESARROLLO
+## 📋 7. ASIGNACIÓN DE TAREAS
+
+### TIAGO:
+- `crearArchivoPuestos()` y `crearArchivoEmpleados()` ✅
+- `altaPuesto()` y `altaEmpleado()` ✅
+
+### SOPHIA:
+- `bajaLogicaPuesto()` y `bajaLogicaEmpleado()` ✅
+- `bajaFisicaPuesto()` y `bajaFisicaEmpleado()` ✅
+
+### AMBAR:
+- `modificarPuesto()` y `modificarEmpleado()`
+- `listarPuestos()` y `listarEmpleados()`
+- `consultarPuesto()` y `consultarEmpleado()`
+
+## 💡 8. RECOMENDACIONES PARA EL EQUIPO DE DESARROLLO
 
 ### A. Metodología de Trabajo y Colaboración
-1.  **🗺️ Seguir el Plan:** Este documento (`plan.md`) es nuestra guía. Antes de empezar una nueva función, revisa la fase correspondiente para asegurarte de que cumples con la estrategia definida (ej. acceso a disco vs. memoria).
 
-2.  **🪜 Desarrollo Incremental:** No intentes implementar todo un módulo de una vez. Sigue los pasos:
+1.  **🗺️ Seguir el Plan:** 
+    Este documento (`plan.md`) es nuestra guía. Antes de empezar una nueva función, revisa la fase correspondiente para asegurarte de que cumples con la estrategia definida (ej. acceso a disco vs. memoria).
+
+2.  **🪜 Desarrollo Incremental:** 
+    No intentes implementar todo un módulo de una vez. Sigue los pasos:
     *   Crea la estructura del menú.
     *   Implementa la función de "Alta".
     *   Implementa la función de "Listar" para poder verificar que el alta funciona.
     *   Continúa con "Modificar" y "Baja".
 
-3.  **🗣️ Comunicación:** Si encuentras un problema o piensas en una mejora que se desvía del plan, coméntalo con el equipo antes de implementarlo.
+3.  **🗣️ Comunicación:** 
+    Si encuentras un problema o piensas en una mejora que se desvía del plan, coméntalo con el equipo antes de implementarlo.
 
 ### B. Uso Eficaz de Asistentes de IA (Copilot)
+
 La IA es una herramienta de apoyo, no un reemplazo del programador. Úsala para acelerar, no para delegar el pensamiento.
 
 1.  **🤖 Ideal para Tareas Repetitivas (Boilerplate):**
+    
     *   **Qué pedir:** "Genera la estructura del `menuGestionEmpleados` con un `switch` para las opciones de ABM", o "Crea una función `listarPuestos` que lea el archivo `puestos.dat` y muestre los registros activos".
+    
     *   **Por qué:** La IA es excelente generando código que sigue un patrón claro y repetitivo, ahorrándote tiempo de escritura.
 
 2.  **📚 Excelente para Explicar y Documentar:**
+    
     *   **Qué pedir:** "Explícame esta línea: `puntero[strcspn(puntero, "\n")] = 0;` como si fuera un profesor", o "Agrega un comentario que explique de forma sencilla para qué sirve la función `validarPass`".
+    
     *   **Por qué:** Ayuda a comprender código complejo (especialmente de C/C++) y a mantener una buena documentación interna.
 
 3.  **✨ Útil para Refactorizar y Optimizar:**
+    
     *   **Qué pedir:** "Tengo esta función que usa `scanf`, ¿puedes reescribirla usando `fgets` para que sea más segura contra desbordamientos de búfer?", o "Esta función es muy larga, ¿puedes separarla en funciones más pequeñas?".
+    
     *   **Por qué:** La IA puede sugerir mejoras de seguridad, legibilidad y eficiencia que quizás no veas a simple vista.
 
 4.  **⚠️ ¡CUIDADO! Cuándo NO confiar ciegamente en la IA:**
+    
     *   **Lógica de Negocio Crítica:** No pidas "Haz el sistema de matchmaking". La IA no conoce las reglas específicas de las consignas. Debes guiarla paso a paso: "Compara la edad del empleado con la edad mínima y máxima del puesto".
+    
     *   **Decisiones de Arquitectura:** La decisión de qué datos van a memoria y cuáles a disco es nuestra. La IA puede implementar cualquiera de las dos, pero no sabe cuál es la correcta según los requisitos del proyecto.
+    
     *   **Verificación Siempre:** **NUNCA** aceptes código de la IA sin entender qué hace. Siempre revísalo, comprueba que se alinea con el plan y, lo más importante, **pruébalo** para asegurarte de que funciona como esperas.
