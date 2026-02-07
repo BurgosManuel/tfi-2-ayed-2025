@@ -35,9 +35,9 @@ Los datos se persisten en archivos binarios:
         *   **Grabar (Alta)**: Añade un nuevo registro al archivo con validaciones completas.
         *   **Baja Lógica**: Marca un registro como inactivo sin eliminarlo del archivo.
         *   **Baja Física**: Elimina permanentemente un registro del archivo usando archivo auxiliar.
-        *   **Modificar**: Permite editar los campos de un registro existente (en construcción).
-        *   **Listar**: Muestra todos los registros del archivo (en construcción).
-        *   **Consultar**: Busca y muestra un registro específico por su ID o DNI (en construcción).
+        *   **Modificar**: Permite editar los campos de un registro existente con validaciones.
+        *   **Listar**: Muestra todos los registros activos del archivo.
+        *   **Consultar**: Busca y muestra un registro específico por su ID o DNI.
 
 ## Funcionalidades Implementadas
 
@@ -63,9 +63,9 @@ Los datos se persisten en archivos binarios:
 *   **`altaPuesto()`**:
     - Abre el archivo con modo `r+b` (lectura/escritura) para verificar existencia.
     - Valida que el ID no esté duplicado usando `existeIdPuesto()`.
-    - Valida edades (rango 18-65, mínima <= máxima).
-    - Valida nivel de educación (1-5).
-    - Valida años de experiencia (0-100).
+    - Valida edades (rango 18-65, mínima <= máxima) usando `esValidaEdad()`.
+    - Valida nivel de educación (1-5) usando `esValidoNivelEducacion()`.
+    - Valida años de experiencia (0-100) usando `esValidaExperiencia()`.
     - Usa `fseek()` para posicionar al final y escribir el registro.
     - Cierra el archivo correctamente en todos los casos de salida.
 
@@ -78,6 +78,22 @@ Los datos se persisten en archivos binarios:
     - Copia todos los registros excepto el que se desea eliminar.
     - Elimina el archivo original y renombra el auxiliar.
 
+*   **`modificarPuesto()`**:
+    - Busca el puesto por ID en el archivo.
+    - Permite modificar: nombre del cargo, edades, nivel educativo y experiencia.
+    - Aplica las mismas validaciones que en alta usando funciones reutilizables.
+    - Reescribe el registro en su posición original usando `fseek()`.
+
+*   **`listarPuestos()`**:
+    - Lee secuencialmente todos los registros del archivo.
+    - Muestra solo los puestos con `activo == true`.
+    - Informa si no hay puestos activos registrados.
+
+*   **`consultarPuesto()`**:
+    - Solicita un ID al usuario.
+    - Busca el puesto en el archivo y muestra su información detallada.
+    - Informa si el puesto no existe o está inactivo.
+
 ### Gestión de Empleados
 
 *   **`crearArchivoEmpleados()`**: 
@@ -87,9 +103,9 @@ Los datos se persisten en archivos binarios:
 *   **`altaEmpleado()`**:
     - Abre el archivo con modo `r+b` para verificar existencia.
     - Valida que el DNI no esté duplicado usando `existeDniEmpleado()`.
-    - Valida edad (rango 18-65).
-    - Valida nivel de educación (1-5).
-    - Valida años de experiencia (0-100).
+    - Valida edad (rango 18-65) usando `esValidaEdad()`.
+    - Valida nivel de educación (1-5) usando `esValidoNivelEducacion()`.
+    - Valida años de experiencia (0-100) usando `esValidaExperiencia()`.
     - Usa `fseek()` para posicionar al final y escribir el registro.
     - Cierra el archivo correctamente en todos los casos de salida.
 
@@ -101,6 +117,22 @@ Los datos se persisten en archivos binarios:
     - Crea un archivo auxiliar `aux.dat`.
     - Copia todos los registros excepto el que se desea eliminar.
     - Elimina el archivo original y renombra el auxiliar.
+
+*   **`modificarEmpleado()`**:
+    - Busca el empleado por DNI en el archivo.
+    - Permite modificar: nombre, edad, nivel educativo y experiencia.
+    - Aplica las mismas validaciones que en alta usando funciones reutilizables.
+    - Reescribe el registro en su posición original usando `fseek()`.
+
+*   **`listarEmpleados()`**:
+    - Lee secuencialmente todos los registros del archivo.
+    - Muestra solo los empleados con `activo == true`.
+    - Informa si no hay empleados activos registrados.
+
+*   **`consultarEmpleado()`**:
+    - Solicita un DNI al usuario.
+    - Busca el empleado en el archivo y muestra su información detallada.
+    - Informa si el empleado no existe o está inactivo.
 
 ### Persistencia de Datos
 
@@ -134,20 +166,14 @@ Los datos se persisten en archivos binarios:
 *   **`existeIdPuesto(int id)`**: Verifica si un ID de puesto ya existe en el archivo.
 *   **`existeDniEmpleado(int dni)`**: Verifica si un DNI de empleado ya existe en el archivo.
 *   **`esCaracterPermitido(char c)`**: Verifica si un carácter pertenece al conjunto de símbolos permitidos.
+*   **`esValidaEdad(int edad)`**: Valida que la edad esté en el rango laboral (18-65).
+*   **`esValidaExperiencia(int anios)`**: Valida que los años de experiencia estén en rango válido (0-100).
+*   **`esValidoNivelEducacion(int nivel)`**: Valida que el nivel de educación esté entre 1 y 5.
 
 ## Módulos en Construcción
 
 Las siguientes funciones están definidas pero pendientes de implementación:
 
-### Gestión de Puestos:
-- `modificarPuesto()` - Editar campos de un puesto existente
-- `listarPuestos()` - Mostrar todos los puestos
-- `consultarPuesto()` - Buscar puesto por ID
-
-### Gestión de Empleados:
-- `modificarEmpleado()` - Editar campos de un empleado existente
-- `listarEmpleados()` - Mostrar todos los empleados
-- `consultarEmpleado()` - Buscar empleado por DNI
 
 ### Matchmaking:
 - `buscarCandidatosParaPuesto()` - Encontrar empleados aptos para un puesto

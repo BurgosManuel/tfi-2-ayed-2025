@@ -82,16 +82,16 @@ La función `generarMatch` comparará un Puesto contra la lista de Empleados. Es
 *   [x] Implementar `altaPuesto()` (Grabar):
     *   [x] Validación de existencia del archivo al inicio (modo `r+b`).
     *   [x] Validación de ID duplicado con `existeIdPuesto()`.
-    *   [x] Validación de edades (rango 18-65).
-    *   [x] Validación de nivel de educación (1-5).
-    *   [x] Validación de años de experiencia (0-100).
+    *   [x] Validación de edades (rango 18-65) usando `esValidaEdad()`.
+    *   [x] Validación de nivel de educación (1-5) usando `esValidoNivelEducacion()`.
+    *   [x] Validación de años de experiencia (0-100) usando `esValidaExperiencia()`.
     *   [x] Uso de `fseek()` para posicionar al final y escribir.
     *   [x] Cierre correcto del archivo en todos los casos de salida.
 *   [x] Implementar `bajaLogicaPuesto()`: Busca por ID y establece `activo = false`.
 *   [x] Implementar `bajaFisicaPuesto()`: Elimina permanentemente usando archivo auxiliar.
-*   [ ] Implementar `modificarPuesto()`: Busca un puesto por ID y permite editar sus campos.
-*   [ ] Implementar `listarPuestos()`: Lee y muestra todos los registros de `puestos.dat`.
-*   [ ] Implementar `consultarPuesto()`: Pide un ID y muestra la información detallada.
+*   [x] Implementar `modificarPuesto()`: Busca un puesto por ID y permite editar sus campos con validaciones.
+*   [x] Implementar `listarPuestos()`: Lee y muestra todos los registros activos de `puestos.dat`.
+*   [x] Implementar `consultarPuesto()`: Pide un ID y muestra la información detallada.
 
 ### Fase 3: ✅ Módulo de Gestión de Empleados (COMPLETADA)
 *   [x] Actualizar `menuGestionEmpleados` para incluir las nuevas opciones.
@@ -99,16 +99,16 @@ La función `generarMatch` comparará un Puesto contra la lista de Empleados. Es
 *   [x] Implementar `altaEmpleado()` (Grabar):
     *   [x] Validación de existencia del archivo al inicio (modo `r+b`).
     *   [x] Validación de DNI duplicado con `existeDniEmpleado()`.
-    *   [x] Validación de edad (rango 18-65).
-    *   [x] Validación de nivel de educación (1-5).
-    *   [x] Validación de años de experiencia (0-100).
+    *   [x] Validación de edad (rango 18-65) usando `esValidaEdad()`.
+    *   [x] Validación de nivel de educación (1-5) usando `esValidoNivelEducacion()`.
+    *   [x] Validación de años de experiencia (0-100) usando `esValidaExperiencia()`.
     *   [x] Uso de `fseek()` para posicionar al final y escribir.
     *   [x] Cierre correcto del archivo en todos los casos de salida.
 *   [x] Implementar `bajaLogicaEmpleado()`: Busca por DNI y establece `activo = false`.
 *   [x] Implementar `bajaFisicaEmpleado()`: Elimina permanentemente usando archivo auxiliar.
-*   [ ] Implementar `modificarEmpleado()`: Busca un empleado por DNI y permite editar sus campos.
-*   [ ] Implementar `listarEmpleados()`: Lee y muestra todos los registros de `empleados.dat`.
-*   [ ] Implementar `consultarEmpleado()`: Pide un DNI y muestra la información detallada.
+*   [x] Implementar `modificarEmpleado()`: Busca un empleado por DNI y permite editar sus campos con validaciones.
+*   [x] Implementar `listarEmpleados()`: Lee y muestra todos los registros activos de `empleados.dat`.
+*   [x] Implementar `consultarEmpleado()`: Pide un DNI y muestra la información detallada.
 
 ### Fase 4: ⏳ Módulo de Matchmaking (EN PROGRESO)
 *   [x] Crear el submenú `menuMatchmaking` con las opciones.
@@ -153,9 +153,9 @@ La función `generarMatch` comparará un Puesto contra la lista de Empleados. Es
 - `bajaFisicaPuesto()` y `bajaFisicaEmpleado()` ✅
 
 ### AMBAR:
-- `modificarPuesto()` y `modificarEmpleado()`
-- `listarPuestos()` y `listarEmpleados()`
-- `consultarPuesto()` y `consultarEmpleado()`
+- `modificarPuesto()` y `modificarEmpleado()` ✅
+- `listarPuestos()` y `listarEmpleados()` ✅
+- `consultarPuesto()` y `consultarEmpleado()` ✅
 
 ## 💡 8. RECOMENDACIONES PARA EL EQUIPO DE DESARROLLO
 

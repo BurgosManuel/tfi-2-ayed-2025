@@ -3,6 +3,14 @@
 #include <ctype.h>  // Libreria para utilizar isupper, islower, isdigit
 
 
+/** TRABAJO FINAL INTEGRADOR 2 - AYED 2025 1K4
+ * INTEGRANTES:
+ * - Burgos Sergio Manuel - Legajo 64522
+ * - Medina Ambar Yasmila Solana - Legajo 64470
+ * - Ruiz Tiago Gabriel - Legajo 64601
+ * - Santucho Thanya Sophia - Legajo 64528
+ */
+
 // ========= ENTIDADES ==========
 struct usuario {
     char user[11];
