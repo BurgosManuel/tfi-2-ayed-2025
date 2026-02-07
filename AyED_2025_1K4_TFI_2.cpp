@@ -463,11 +463,71 @@ void altaPuesto() {
 }
 
 void bajaLogicaPuesto() {
-    printf("\n--- Baja Logica de Puesto (en construccion) ---\n");
+    FILE *fp = fopen("puestos.dat", "rb+");
+    if (fp == NULL) {
+        printf("Error al abrir el archivo de puestos.\n");
+        return;
+    }
+
+    int id;
+    puesto p;
+    bool encontrado = false;
+
+    printf("Ingrese el ID del puesto a dar de baja lógica: ");
+    scanf("%d", &id);
+
+    while (fread(&p, sizeof(puesto), 1, fp)) {
+        if (p.id == id && p.activo) {
+            p.activo = false;
+            fseek(fp, -sizeof(puesto), SEEK_CUR);
+            fwrite(&p, sizeof(puesto), 1, fp);
+            encontrado = true;
+            break;
+        }
+    }
+
+    fclose(fp);
+
+    if (encontrado)
+        printf("Puesto dado de baja lógica correctamente.\n");
+    else
+        printf("Puesto no encontrado o ya estaba inactivo.\n");
 }
 
 void bajaFisicaPuesto() {
-    printf("\n--- Baja Fisica de Puesto (en construccion) ---\n");
+    FILE *fp = fopen("puestos.dat", "rb");
+    FILE *aux = fopen("aux.dat", "wb");
+
+    if (fp == NULL || aux == NULL) {
+        printf("Error al abrir archivos.\n");
+        return;
+    }
+
+    int id;
+    puesto p;
+    bool eliminado = false;
+
+    printf("Ingrese el ID del puesto a eliminar físicamente: ");
+    scanf("%d", &id);
+
+    while (fread(&p, sizeof(puesto), 1, fp)) {
+        if (p.id != id) {
+            fwrite(&p, sizeof(puesto), 1, aux);
+        } else {
+            eliminado = true;
+        }
+    }
+
+    fclose(fp);
+    fclose(aux);
+
+    remove("puestos.dat");
+    rename("aux.dat", "puestos.dat");
+
+    if (eliminado)
+        printf("Puesto eliminado físicamente.\n");
+    else
+        printf("Puesto no encontrado.\n");
 }
 
 void modificarPuesto() {
@@ -578,12 +638,73 @@ void altaEmpleado() {
 }
 
 void bajaLogicaEmpleado() {
-    printf("\n--- Baja Logica de Empleado (en construccion) ---\n");
+    FILE *fp = fopen("empleados.dat", "rb+");
+    if (fp == NULL) {
+        printf("Error al abrir el archivo de empleados.\n");
+        return;
+    }
+
+    int dni;
+    empleado e;
+    bool encontrado = false;
+
+    printf("Ingrese el DNI del empleado a dar de baja lógica: ");
+    scanf("%d", &dni);
+
+    while (fread(&e, sizeof(empleado), 1, fp)) {
+        if (e.dni == dni && e.activo) {
+            e.activo = false;
+            fseek(fp, -sizeof(empleado), SEEK_CUR);
+            fwrite(&e, sizeof(empleado), 1, fp);
+            encontrado = true;
+            break;
+        }
+    }
+
+    fclose(fp);
+
+    if (encontrado)
+        printf("Empleado dado de baja lógica correctamente.\n");
+    else
+        printf("Empleado no encontrado o ya estaba inactivo.\n");
 }
 
 void bajaFisicaEmpleado() {
-    printf("\n--- Baja Fisica de Empleado (en construccion) ---\n");
+    FILE *fp = fopen("empleados.dat", "rb");
+    FILE *aux = fopen("aux.dat", "wb");
+
+    if (fp == NULL || aux == NULL) {
+        printf("Error al abrir archivos.\n");
+        return;
+    }
+
+    int dni;
+    empleado e;
+    bool eliminado = false;
+
+    printf("Ingrese el DNI del empleado a eliminar físicamente: ");
+    scanf("%d", &dni);
+
+    while (fread(&e, sizeof(empleado), 1, fp)) {
+        if (e.dni != dni) {
+            fwrite(&e, sizeof(empleado), 1, aux);
+        } else {
+            eliminado = true;
+        }
+    }
+
+    fclose(fp);
+    fclose(aux);
+
+    remove("empleados.dat");
+    rename("aux.dat", "empleados.dat");
+
+    if (eliminado)
+        printf("Empleado eliminado físicamente.\n");
+    else
+        printf("Empleado no encontrado.\n");
 }
+
 
 void modificarEmpleado() {
     printf("\n--- Modificar Empleado (en construccion) ---\n");
