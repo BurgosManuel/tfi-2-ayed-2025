@@ -1051,7 +1051,7 @@ void cargarUsuariosEnMemoria() {
 
     cantidadUsuarios = 0;
     // No usamos feof() para evitar desbordes en la lectura.
-    while(fread(&usuariosEnMemoria[cantidadUsuarios], sizeof(usuario), 1, archivo) == 1) {
+    while(fread(&usuariosEnMemoria[cantidadUsuarios], sizeof(usuario), 1, archivo)) {
         cantidadUsuarios++;
         if (cantidadUsuarios >= 100) break;
     }
