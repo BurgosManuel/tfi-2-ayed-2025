@@ -473,7 +473,7 @@ void bajaLogicaPuesto() {
     puesto p;
     bool encontrado = false;
 
-    printf("Ingrese el ID del puesto a dar de baja lógica: ");
+    printf("Ingrese el ID del puesto a dar de baja logica: ");
     scanf("%d", &id);
 
     while (fread(&p, sizeof(puesto), 1, fp)) {
@@ -489,7 +489,7 @@ void bajaLogicaPuesto() {
     fclose(fp);
 
     if (encontrado)
-        printf("Puesto dado de baja lógica correctamente.\n");
+        printf("Puesto dado de baja logica correctamente.\n");
     else
         printf("Puesto no encontrado o ya estaba inactivo.\n");
 }
@@ -507,7 +507,7 @@ void bajaFisicaPuesto() {
     puesto p;
     bool eliminado = false;
 
-    printf("Ingrese el ID del puesto a eliminar físicamente: ");
+    printf("Ingrese el ID del puesto a eliminar fisicamente: ");
     scanf("%d", &id);
 
     while (fread(&p, sizeof(puesto), 1, fp)) {
@@ -525,7 +525,7 @@ void bajaFisicaPuesto() {
     rename("aux.dat", "puestos.dat");
 
     if (eliminado)
-        printf("Puesto eliminado físicamente.\n");
+        printf("Puesto eliminado fisicamente.\n");
     else
         printf("Puesto no encontrado.\n");
 }
@@ -648,7 +648,7 @@ void bajaLogicaEmpleado() {
     empleado e;
     bool encontrado = false;
 
-    printf("Ingrese el DNI del empleado a dar de baja lógica: ");
+    printf("Ingrese el DNI del empleado a dar de baja logica: ");
     scanf("%d", &dni);
 
     while (fread(&e, sizeof(empleado), 1, fp)) {
@@ -664,7 +664,7 @@ void bajaLogicaEmpleado() {
     fclose(fp);
 
     if (encontrado)
-        printf("Empleado dado de baja lógica correctamente.\n");
+        printf("Empleado dado de baja logica correctamente.\n");
     else
         printf("Empleado no encontrado o ya estaba inactivo.\n");
 }
@@ -682,7 +682,7 @@ void bajaFisicaEmpleado() {
     empleado e;
     bool eliminado = false;
 
-    printf("Ingrese el DNI del empleado a eliminar físicamente: ");
+    printf("Ingrese el DNI del empleado a eliminar fisicamente: ");
     scanf("%d", &dni);
 
     while (fread(&e, sizeof(empleado), 1, fp)) {
@@ -700,7 +700,7 @@ void bajaFisicaEmpleado() {
     rename("aux.dat", "empleados.dat");
 
     if (eliminado)
-        printf("Empleado eliminado físicamente.\n");
+        printf("Empleado eliminado fisicamente.\n");
     else
         printf("Empleado no encontrado.\n");
 }
