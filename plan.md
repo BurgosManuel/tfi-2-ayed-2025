@@ -110,37 +110,47 @@ La función `generarMatch` comparará un Puesto contra la lista de Empleados. Es
 *   [x] Implementar `listarEmpleados()`: Lee y muestra todos los registros activos de `empleados.dat`.
 *   [x] Implementar `consultarEmpleado()`: Pide un DNI y muestra la información detallada.
 
-### Fase 4: ⏳ Módulo de Matchmaking (EN PROGRESO)
+### Fase 4: ⏳ Módulo de Matchmaking con Estructuras Dinámicas (EN PROGRESO)
+
+Al ingresar a este módulo, el sistema cargará automáticamente los datos de `empleados.dat` y `puestos.dat` en **listas enlazadas** en memoria, mostrando el mensaje "Cargando datos en memoria...". Todas las operaciones de matchmaking se realizarán sobre estas estructuras dinámicas.
+
 *   [x] Crear el submenú `menuMatchmaking` con las opciones.
+
+*   [ ] Implementar estructuras de nodos para listas enlazadas:
+    *   Definir `struct nodoEmpleado` con un puntero `siguiente`.
+    *   Definir `struct nodoPuesto` con un puntero `siguiente`.
+    *   Basarse en el archivo `Lista1.cpp` como referencia de implementación.
+
+*   [ ] Implementar `cargarEmpleadosEnLista()`:
+    *   Mostrar mensaje "Cargando empleados en memoria...".
+    *   Liberar cualquier lista previamente cargada para evitar fugas de memoria.
+    *   Abrir `empleados.dat` y leerlo secuencialmente.
+    *   Por cada registro de empleado activo, crear un nuevo nodo y añadirlo a la lista.
+    *   Informar al usuario cuántos empleados se cargaron.
+
+*   [ ] Implementar `cargarPuestosEnLista()`:
+    *   Mostrar mensaje "Cargando puestos en memoria...".
+    *   Liberar cualquier lista previamente cargada.
+    *   Abrir `puestos.dat` y leerlo secuencialmente.
+    *   Por cada registro de puesto activo, crear un nuevo nodo y añadirlo a la lista.
+    *   Informar al usuario cuántos puestos se cargaron.
 
 *   [ ] Implementar `buscarCandidatosParaPuesto()`:
     *   Solicitar al usuario el ID del puesto.
-    *   Buscar y leer el registro del puesto en `puestos.dat`. Si no se encuentra o está inactivo, informar al usuario.
-    *   Abrir `empleados.dat` y recorrerlo secuencialmente desde el principio.
-    *   Para cada empleado con `activo == true`, comparar sus atributos (`edad`, `nivelEducacion`, `aniosExperiencia`) con los requisitos del puesto.
-    *   Si el empleado cumple con todos los criterios, mostrar sus datos (DNI, Nombre, etc.) en pantalla como un candidato válido.
+    *   Buscar el puesto en la lista enlazada de puestos en memoria.
+    *   Si no se encuentra, informar al usuario.
+    *   Recorrer la lista de empleados y comparar atributos (`edad`, `nivelEducacion`, `aniosExperiencia`) con los requisitos del puesto.
+    *   Si el empleado cumple con todos los criterios, mostrar sus datos (DNI, Nombre, etc.) como candidato válido.
 
 *   [ ] Implementar `buscarPuestosParaCandidato()`:
     *   Solicitar al usuario el DNI del empleado.
-    *   Buscar y leer el registro del empleado en `empleados.dat`. Si no se encuentra o está inactivo, informar al usuario.
-    *   Abrir `puestos.dat` y recorrerlo secuencialmente.
-    *   Para cada puesto con `activo == true`, comparar sus requisitos con los atributos del empleado.
-    *   Si el empleado es apto para el puesto, mostrar los datos del puesto (ID, Nombre del Cargo, etc.) en pantalla.
+    *   Buscar el empleado en la lista enlazada de empleados en memoria.
+    *   Si no se encuentra, informar al usuario.
+    *   Recorrer la lista de puestos y comparar requisitos con los atributos del empleado.
+    *   Si el empleado es apto para el puesto, mostrar los datos del puesto (ID, Nombre del Cargo, etc.).
 
-### Fase 5: 📊 Reportes y Estructuras Dinámicas
-*   [ ] Crear un submenú `menuReportes` o añadir una opción en el menú principal para "Cargar Datos en Memoria".
-
-*   [ ] Implementar la función `cargarEmpleadosEnLista()`:
-    *   Al ser invocada, debe liberar cualquier lista previamente cargada para evitar fugas de memoria.
-    *   Abrir `empleados.dat` y leerlo secuencialmente.
-    *   Por cada registro de empleado activo, crear un nuevo nodo en una **lista enlazada simple** (`struct nodoEmpleado`).
-    *   Almacenar los datos del empleado en el nodo y añadirlo al final de la lista.
-    *   Informar al usuario cuántos empleados se cargaron en la estructura dinámica.
-
-*   [ ] Implementar la función `reporteAvanzadoEmpleados()`:
-    *   Verificar si la lista enlazada de empleados existe en memoria. Si no, pedir al usuario que la cargue primero.
-    *   Recorrer la lista enlazada y mostrar los datos de los empleados, por ejemplo, ordenados por DNI o experiencia.
-    *   (Opcional) Implementar un reporte que muestre estadísticas, como el promedio de edad o el nivel educativo más común.
+*   [ ] Implementar `liberarListaEmpleados()` y `liberarListaPuestos()`:
+    *   Funciones auxiliares para liberar la memoria de las listas al salir del módulo o al recargar.
 
 ## 📋 7. ASIGNACIÓN DE TAREAS
 
