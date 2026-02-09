@@ -37,6 +37,17 @@ struct empleado {
     bool activo;
 };
 
+// Estructuras de nodos para listas enlazadas
+struct nodoEmpleado {
+    empleado dato;
+    nodoEmpleado *sig;
+};
+
+struct nodoPuesto {
+    puesto dato;
+    nodoPuesto *sig;
+};
+
 // ========== VARIABLES GLOBALES ==========
 
 // Opciones de menu login
@@ -85,8 +96,7 @@ const int numOpcionesGestionEmpleados = sizeof(opcionesGestionEmpleados) / sizeo
 // Opciones de menu matchmaking
 const char *opcionesMatchmaking[] = {
     "Volver",
-    "Buscar candidatos para un puesto",
-    "Buscar puestos para un candidato"
+    "Buscar candidatos para un puesto"
 };
 const int numOpcionesMatchmaking = sizeof(opcionesMatchmaking) / sizeof(opcionesMatchmaking[0]);
 
@@ -96,6 +106,10 @@ bool sesionActiva = false;
 // Usuarios
 int cantidadUsuarios = 0;
 usuario usuariosEnMemoria[100]; // Limitamos hasta 100 usuarios.
+
+// Inicializamos listas enlazadas vacias
+nodoEmpleado *listaEmpleados = NULL;
+nodoPuesto *listaPuestos = NULL;
 
 // ========== PROTOTIPO DE FUNCIONES ==========
 
@@ -126,9 +140,12 @@ void consultarEmpleado();
 
 void crearArchivo(const char *nombreArchivo);
 
-// Matchmaking
+// Matchmaking - Funciones de listas enlazadas
+void cargarEmpleadosEnLista();
+void cargarPuestosEnLista();
+void liberarListaEmpleados();
+void liberarListaPuestos();
 void buscarCandidatosParaPuesto();
-void buscarPuestosParaCandidato();
 
 // Gestión de Usuarios
 void cargarUsuariosEnMemoria();
@@ -317,8 +334,15 @@ void menuGestionEmpleados() {
 
 void menuMatchmaking() {
     int opcion;
+
+    // Carga automatica de datos en listas enlazadas al entrar al modulo
+    printf("\n--- Matchmaking ---\n");
+    printf("Cargando datos en memoria...\n");
+    cargarEmpleadosEnLista();
+    cargarPuestosEnLista();
+
     do {
-        printf("\n--- Matchmaking ---\n");
+        printf("\n--- Menu Matchmaking ---\n");
         for (int i = 1; i < numOpcionesMatchmaking; i++) {
             printf("[%d]. %s\n", i, opcionesMatchmaking[i]);
         }
@@ -331,10 +355,11 @@ void menuMatchmaking() {
             case 1:
                 buscarCandidatosParaPuesto();
                 break;
-            case 2:
-                buscarPuestosParaCandidato();
-                break;
             case 0:
+                // Liberar memoria al salir del modulo
+                liberarListaEmpleados();
+                liberarListaPuestos();
+                printf("Memoria liberada. Saliendo del modulo de Matchmaking.\n");
                 break;
             default:
                 printf("Opcion no valida. Intente de nuevo.\n");
@@ -981,14 +1006,208 @@ void consultarEmpleado() {
     fclose(fp);
 }
 
-// ========= IMPLEMENTACIÓN DE MATCHMAKING ==========
+// ========= IMPLEMENTACION DE MATCHMAKING CON LISTAS ENLAZADAS ==========
 
-void buscarCandidatosParaPuesto() {
-    printf("\n--- Buscar Candidatos para Puesto (en construccion) ---\n");
+/**
+ * Carga los empleados activos de empleados.dat en una lista enlazada.
+ * Se usa para realizar operaciones de matchmaking en memoria.
+ */
+void cargarEmpleadosEnLista() {
+    // Liberar lista anterior si existe (evita fugas de memoria)
+    liberarListaEmpleados();
+
+    FILE *fp = fopen("empleados.dat", "rb");
+    if (fp == NULL) {
+        printf("Aviso: No se pudo abrir empleados.dat. Lista de empleados vacia.\n");
+        return;
+    }
+
+    empleado e;
+    int contador = 0;
+    nodoEmpleado *ultimo = NULL;
+
+    while (fread(&e, sizeof(empleado), 1, fp)) {
+        // Solo cargar empleados activos
+        if (e.activo) {
+            // Crear nuevo nodo
+            nodoEmpleado *nuevo = new nodoEmpleado;
+            if (nuevo == NULL) {
+                printf("Error: Memoria insuficiente para cargar empleados.\n");
+                break;
+            }
+
+            nuevo->dato = e;
+            nuevo->sig = NULL;
+
+            // Insertar al final de la lista
+            if (listaEmpleados == NULL) {
+                listaEmpleados = nuevo;
+            } else {
+                ultimo->sig = nuevo;
+            }
+            ultimo = nuevo;
+            contador++;
+        }
+    }
+
+    fclose(fp);
+    printf(">> %d empleado(s) cargado(s) en memoria.\n", contador);
 }
 
-void buscarPuestosParaCandidato() {
-    printf("\n--- Buscar Puestos para Candidato (en construccion) ---\n");
+/**
+ * Carga los puestos activos de puestos.dat en una lista enlazada.
+ * Se usa para realizar operaciones de matchmaking en memoria.
+ */
+void cargarPuestosEnLista() {
+    // Liberar lista anterior si existe (evita fugas de memoria)
+    liberarListaPuestos();
+
+    FILE *fp = fopen("puestos.dat", "rb");
+    if (fp == NULL) {
+        printf("Aviso: No se pudo abrir puestos.dat. Lista de puestos vacia.\n");
+        return;
+    }
+
+    puesto p;
+    int contador = 0;
+    nodoPuesto *ultimo = NULL;
+
+    while (fread(&p, sizeof(puesto), 1, fp)) {
+        // Solo cargar puestos activos
+        if (p.activo) {
+            // Crear nuevo nodo
+            nodoPuesto *nuevo = new nodoPuesto;
+            if (nuevo == NULL) {
+                printf("Error: Memoria insuficiente para cargar puestos.\n");
+                break;
+            }
+
+            nuevo->dato = p;
+            nuevo->sig = NULL;
+
+            // Insertar al final de la lista
+            if (listaPuestos == NULL) {
+                listaPuestos = nuevo;
+            } else {
+                ultimo->sig = nuevo;
+            }
+            ultimo = nuevo;
+            contador++;
+        }
+    }
+
+    fclose(fp);
+    printf(">> %d puesto(s) cargado(s) en memoria.\n", contador);
+}
+
+/**
+ * Libera la memoria de la lista enlazada de empleados.
+ */
+void liberarListaEmpleados() {
+    nodoEmpleado *actual = listaEmpleados;
+    nodoEmpleado *siguiente;
+
+    while (actual != NULL) {
+        siguiente = actual->sig;
+        delete actual;
+        actual = siguiente;
+    }
+
+    listaEmpleados = NULL;
+}
+
+/**
+ * Libera la memoria de la lista enlazada de puestos.
+ */
+void liberarListaPuestos() {
+    nodoPuesto *actual = listaPuestos;
+    nodoPuesto *siguiente;
+
+    while (actual != NULL) {
+        siguiente = actual->sig;
+        delete actual;
+        actual = siguiente;
+    }
+
+    listaPuestos = NULL;
+}
+
+/**
+ * Busca candidatos (empleados) que cumplan con los requisitos de un puesto.
+ * Utiliza las listas enlazadas cargadas en memoria.
+ */
+void buscarCandidatosParaPuesto() {
+    if (listaPuestos == NULL) {
+        printf("No hay puestos cargados en memoria.\n");
+        return;
+    }
+    if (listaEmpleados == NULL) {
+        printf("No hay empleados cargados en memoria.\n");
+        return;
+    }
+
+    int idBuscado;
+    printf("\nIngrese el ID del puesto: ");
+    scanf("%d", &idBuscado);
+
+    // Buscar el puesto en la lista enlazada
+    nodoPuesto *puestoActual = listaPuestos;
+    puesto *puestoEncontrado = NULL;
+
+    while (puestoActual != NULL) {
+        if (puestoActual->dato.id == idBuscado) {
+            puestoEncontrado = &(puestoActual->dato);
+            break;
+        }
+        puestoActual = puestoActual->sig;
+    }
+
+    if (puestoEncontrado == NULL) {
+        printf("Puesto con ID %d no encontrado.\n", idBuscado);
+        return;
+    }
+
+    // Mostrar datos del puesto
+    printf("\n=== PUESTO SELECCIONADO ===\n");
+    printf("ID: %d\n", puestoEncontrado->id);
+    printf("Cargo: %s\n", puestoEncontrado->nombreCargo);
+    printf("Edad requerida: %d - %d anios\n", puestoEncontrado->edadMinima, puestoEncontrado->edadMaxima);
+    printf("Nivel educativo minimo: %d\n", puestoEncontrado->nivelEducacionReq);
+    printf("Experiencia minima: %d anios\n", puestoEncontrado->aniosExperienciaReq);
+
+    // Buscar candidatos que cumplan los requisitos
+    printf("\n=== CANDIDATOS QUE CUMPLEN LOS REQUISITOS ===\n");
+
+    nodoEmpleado *empActual = listaEmpleados;
+    int candidatosEncontrados = 0;
+
+    while (empActual != NULL) {
+        empleado *e = &(empActual->dato);
+
+        // Verificar los 3 criterios de matchmaking
+        bool cumpleEdad = (e->edad >= puestoEncontrado->edadMinima &&
+                          e->edad <= puestoEncontrado->edadMaxima);
+        bool cumpleEducacion = (e->nivelEducacion >= puestoEncontrado->nivelEducacionReq);
+        bool cumpleExperiencia = (e->aniosExperiencia >= puestoEncontrado->aniosExperienciaReq);
+
+        if (cumpleEdad && cumpleEducacion && cumpleExperiencia) {
+            candidatosEncontrados++;
+            printf("\n[Candidato %d]\n", candidatosEncontrados);
+            printf("  DNI: %d\n", e->dni);
+            printf("  Nombre: %s\n", e->nombre);
+            printf("  Edad: %d anios\n", e->edad);
+            printf("  Nivel educativo: %d\n", e->nivelEducacion);
+            printf("  Experiencia: %d anios\n", e->aniosExperiencia);
+        }
+
+        empActual = empActual->sig;
+    }
+
+    if (candidatosEncontrados == 0) {
+        printf("No se encontraron candidatos que cumplan todos los requisitos.\n");
+    } else {
+        printf("\n>> Total: %d candidato(s) encontrado(s).\n", candidatosEncontrados);
+    }
 }
 
 // ========= IMPLEMENTACIÓN DE GESTIÓN DE USUARIOS ==========

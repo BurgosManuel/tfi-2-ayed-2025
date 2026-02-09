@@ -110,46 +110,39 @@ La función `generarMatch` comparará un Puesto contra la lista de Empleados. Es
 *   [x] Implementar `listarEmpleados()`: Lee y muestra todos los registros activos de `empleados.dat`.
 *   [x] Implementar `consultarEmpleado()`: Pide un DNI y muestra la información detallada.
 
-### Fase 4: ⏳ Módulo de Matchmaking con Estructuras Dinámicas (EN PROGRESO)
+### Fase 4: ✅ Módulo de Matchmaking con Estructuras Dinámicas (COMPLETADA)
 
-Al ingresar a este módulo, el sistema cargará automáticamente los datos de `empleados.dat` y `puestos.dat` en **listas enlazadas** en memoria, mostrando el mensaje "Cargando datos en memoria...". Todas las operaciones de matchmaking se realizarán sobre estas estructuras dinámicas.
+Al ingresar a este módulo, el sistema carga automáticamente los datos de `empleados.dat` y `puestos.dat` en **listas enlazadas** en memoria, mostrando el mensaje "Cargando datos en memoria...". Todas las operaciones de matchmaking se realizan sobre estas estructuras dinámicas.
 
 *   [x] Crear el submenú `menuMatchmaking` con las opciones.
 
-*   [ ] Implementar estructuras de nodos para listas enlazadas:
+*   [x] Implementar estructuras de nodos para listas enlazadas:
     *   Definir `struct nodoEmpleado` con un puntero `siguiente`.
     *   Definir `struct nodoPuesto` con un puntero `siguiente`.
     *   Basarse en el archivo `Lista1.cpp` como referencia de implementación.
 
-*   [ ] Implementar `cargarEmpleadosEnLista()`:
+*   [x] Implementar `cargarEmpleadosEnLista()`:
     *   Mostrar mensaje "Cargando empleados en memoria...".
     *   Liberar cualquier lista previamente cargada para evitar fugas de memoria.
     *   Abrir `empleados.dat` y leerlo secuencialmente.
     *   Por cada registro de empleado activo, crear un nuevo nodo y añadirlo a la lista.
     *   Informar al usuario cuántos empleados se cargaron.
 
-*   [ ] Implementar `cargarPuestosEnLista()`:
+*   [x] Implementar `cargarPuestosEnLista()`:
     *   Mostrar mensaje "Cargando puestos en memoria...".
     *   Liberar cualquier lista previamente cargada.
     *   Abrir `puestos.dat` y leerlo secuencialmente.
     *   Por cada registro de puesto activo, crear un nuevo nodo y añadirlo a la lista.
     *   Informar al usuario cuántos puestos se cargaron.
 
-*   [ ] Implementar `buscarCandidatosParaPuesto()`:
+*   [x] Implementar `buscarCandidatosParaPuesto()`:
     *   Solicitar al usuario el ID del puesto.
     *   Buscar el puesto en la lista enlazada de puestos en memoria.
     *   Si no se encuentra, informar al usuario.
     *   Recorrer la lista de empleados y comparar atributos (`edad`, `nivelEducacion`, `aniosExperiencia`) con los requisitos del puesto.
     *   Si el empleado cumple con todos los criterios, mostrar sus datos (DNI, Nombre, etc.) como candidato válido.
 
-*   [ ] Implementar `buscarPuestosParaCandidato()`:
-    *   Solicitar al usuario el DNI del empleado.
-    *   Buscar el empleado en la lista enlazada de empleados en memoria.
-    *   Si no se encuentra, informar al usuario.
-    *   Recorrer la lista de puestos y comparar requisitos con los atributos del empleado.
-    *   Si el empleado es apto para el puesto, mostrar los datos del puesto (ID, Nombre del Cargo, etc.).
-
-*   [ ] Implementar `liberarListaEmpleados()` y `liberarListaPuestos()`:
+*   [x] Implementar `liberarListaEmpleados()` y `liberarListaPuestos()`:
     *   Funciones auxiliares para liberar la memoria de las listas al salir del módulo o al recargar.
 
 ## 📋 7. ASIGNACIÓN DE TAREAS
