@@ -39,6 +39,12 @@ Los datos se persisten en archivos binarios:
         *   **Listar**: Muestra todos los registros activos del archivo.
         *   **Consultar**: Busca y muestra un registro específico por su ID o DNI.
 
+5.  **Menú de Matchmaking (`menuMatchmaking`)**:
+    *   Al ingresar a este módulo, el sistema carga automáticamente los datos de `empleados.dat` y `puestos.dat` en **listas enlazadas** en memoria.
+    *   Muestra el mensaje "Cargando datos en memoria..." e informa cuántos registros se cargaron.
+    *   Permite buscar candidatos (empleados) que cumplan los requisitos de un puesto específico.
+    *   Al salir del módulo, libera automáticamente la memoria de las listas enlazadas.
+
 ## Funcionalidades Implementadas
 
 ### Gestión de Usuarios
@@ -170,14 +176,72 @@ Los datos se persisten en archivos binarios:
 *   **`esValidaExperiencia(int anios)`**: Valida que los años de experiencia estén en rango válido (0-100).
 *   **`esValidoNivelEducacion(int nivel)`**: Valida que el nivel de educación esté entre 1 y 5.
 
-## Módulos en Construcción
+### Variables Globales para Listas Enlazadas
 
-Las siguientes funciones están definidas pero pendientes de implementación:
+```cpp
+nodoEmpleado *listaEmpleados = NULL;  // Lista de empleados en memoria
+nodoPuesto *listaPuestos = NULL;      // Lista de puestos en memoria
+```
 
+Estas listas se inicializan en `NULL` y solo se cargan al ingresar al módulo de Matchmaking.
 
-### Matchmaking:
-- `buscarCandidatosParaPuesto()` - Encontrar empleados aptos para un puesto
-- `buscarPuestosParaCandidato()` - Encontrar puestos aptos para un empleado
+### Matchmaking (Estructuras Dinámicas)
+
+El módulo de Matchmaking utiliza **listas enlazadas** para cargar los datos en memoria y realizar las comparaciones de forma eficiente.
+
+#### Estructuras de Nodos
+
+```cpp
+struct nodoEmpleado {
+    empleado dato;
+    nodoEmpleado *sig;
+};
+
+struct nodoPuesto {
+    puesto dato;
+    nodoPuesto *sig;
+};
+```
+
+#### Funciones de Carga en Memoria
+
+*   **`cargarEmpleadosEnLista()`**:
+    - Libera cualquier lista previamente cargada (evita fugas de memoria).
+    - Abre `empleados.dat` y lee secuencialmente.
+    - Por cada empleado activo, crea un nuevo nodo y lo añade al final de la lista.
+    - Informa cuántos empleados se cargaron.
+
+*   **`cargarPuestosEnLista()`**:
+    - Libera cualquier lista previamente cargada.
+    - Abre `puestos.dat` y lee secuencialmente.
+    - Por cada puesto activo, crea un nuevo nodo y lo añade al final de la lista.
+    - Informa cuántos puestos se cargaron.
+
+#### Funciones de Liberación de Memoria
+
+*   **`liberarListaEmpleados()`**:
+    - Recorre la lista enlazada de empleados.
+    - Libera cada nodo con `delete`.
+    - Establece el puntero de la lista en `NULL`.
+
+*   **`liberarListaPuestos()`**:
+    - Recorre la lista enlazada de puestos.
+    - Libera cada nodo con `delete`.
+    - Establece el puntero de la lista en `NULL`.
+
+#### Función de Búsqueda
+
+*   **`buscarCandidatosParaPuesto()`**:
+    1. Verifica que las listas estén cargadas en memoria.
+    2. Solicita el ID del puesto a buscar.
+    3. Busca el puesto en la lista enlazada de puestos.
+    4. Si lo encuentra, muestra los datos del puesto seleccionado.
+    5. Recorre la lista de empleados comparando:
+        - `empleado.edad` dentro del rango `[puesto.edadMinima, puesto.edadMaxima]`
+        - `empleado.nivelEducacion >= puesto.nivelEducacionReq`
+        - `empleado.aniosExperiencia >= puesto.aniosExperienciaReq`
+    6. Muestra los datos de cada candidato que cumple **todos** los criterios.
+    7. Informa el total de candidatos encontrados.
 
 ## Validaciones de Datos
 
@@ -188,3 +252,24 @@ Las siguientes funciones están definidas pero pendientes de implementación:
 | Años de Experiencia | 0-100 | Años de experiencia laboral |
 | ID Puesto | Único | No puede repetirse |
 | DNI Empleado | Único | No puede repetirse |
+
+## Lógica de Matchmaking
+
+Un empleado es considerado **candidato válido** para un puesto si cumple **todos** los siguientes criterios:
+
+| Criterio | Condición |
+|----------|-----------|
+| Edad | `empleado.edad >= puesto.edadMinima` AND `empleado.edad <= puesto.edadMaxima` |
+| Educación | `empleado.nivelEducacion >= puesto.nivelEducacionReq` |
+| Experiencia | `empleado.aniosExperiencia >= puesto.aniosExperienciaReq` |
+
+## Estrategia de Persistencia
+
+| Datos | Estrategia | Momento de Carga |
+|-------|-----------|------------------|
+| Usuarios | Array en memoria | Al iniciar el programa |
+| Empleados | Lista enlazada | Al entrar al módulo Matchmaking |
+| Puestos | Lista enlazada | Al entrar al módulo Matchmaking |
+
+Los usuarios se guardan automáticamente al cerrar el programa. Las listas enlazadas se liberan al salir del módulo de Matchmaking.
+
