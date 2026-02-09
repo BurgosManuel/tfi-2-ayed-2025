@@ -75,6 +75,7 @@ La función `generarMatch` comparará un Puesto contra la lista de Empleados. Es
 *   [x] Implementar `registrarUsuario()` e `iniciarSesion()`.
 *   [x] Implementar lectura segura de cadenas con `fgets` y limpieza de buffer.
 *   [x] Implementar menú de login y menú principal post-autenticación.
+*   [x] Validación de usuarios duplicados integrada en `validarUsuario()` (evita registrar nombres de usuario ya existentes).
 
 ### Fase 2: ✅ Módulo de Gestión de Puestos (COMPLETADA)
 *   [x] Actualizar `menuGestionPuestos` para incluir las nuevas opciones.

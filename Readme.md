@@ -158,6 +158,7 @@ Los datos se persisten en archivos binarios:
     - Al menos 2 letras mayúsculas.
     - Máximo 3 dígitos.
     - Solo caracteres alfanuméricos o símbolos permitidos (`+-/*?!`).
+    - **Verificación de duplicados integrada**: Rechaza usuarios que ya existen en memoria.
 
 *   **`validarPass(char pass[])`**:
     - 6-32 caracteres.
@@ -175,6 +176,8 @@ Los datos se persisten en archivos binarios:
 *   **`esValidaEdad(int edad)`**: Valida que la edad esté en el rango laboral (18-65).
 *   **`esValidaExperiencia(int anios)`**: Valida que los años de experiencia estén en rango válido (0-100).
 *   **`esValidoNivelEducacion(int nivel)`**: Valida que el nivel de educación esté entre 1 y 5.
+
+> **Nota:** La verificación de usuario duplicado está integrada directamente en `validarUsuario()`, eliminando la necesidad de una función `existeUsuario()` separada.
 
 ### Variables Globales para Listas Enlazadas
 
@@ -247,6 +250,7 @@ struct nodoPuesto {
 
 | Campo | Rango Válido | Descripción |
 |-------|-------------|-------------|
+| Usuario | Único | Validación integrada en `validarUsuario()` |
 | Edad (empleado/puesto) | 18-65 | Rango de edad laboral |
 | Nivel de Educación | 1-5 | 1:Primaria, 2:Secundaria, 3:Terciaria, 4:Grado, 5:Posgrado |
 | Años de Experiencia | 0-100 | Años de experiencia laboral |

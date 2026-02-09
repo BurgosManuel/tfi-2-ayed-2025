@@ -1225,7 +1225,7 @@ void registrarUsuario() {
         printf("Ingrese nombre de usuario (6-10 chars, 1ra minus, min 2 mayus, max 3 dig): ");
         scanf("%s", nuevoUsuario.user);
         if (!validarUsuario(nuevoUsuario.user)) {
-            printf("Error: El nombre de usuario no cumple con las reglas.\n");
+            printf("Error: Usuario invalido (no cumple reglas o ya existe).\n");
         }
     } while (!validarUsuario(nuevoUsuario.user));
 
@@ -1340,6 +1340,13 @@ bool validarUsuario(char user[]) {
     if (mayusculas < 2) return false;
     // d. Tener como máximo 3 dígitos.
     if (digitos > 3) return false;
+
+    // Verificar que el usuario no exista (evitar duplicados)
+    for (int i = 0; i < cantidadUsuarios; i++) {
+        if (strcmp(usuariosEnMemoria[i].user, user) == 0) {
+            return false;
+        }
+    }
 
     return true;
 }
