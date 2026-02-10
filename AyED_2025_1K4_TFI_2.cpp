@@ -76,7 +76,9 @@ const char *opcionesGestionPuestos[] = {
     "Baja Fisica de Puesto",
     "Modificar un Puesto",
     "Listar Puestos",
-    "Consultar un Puesto"
+    "Consultar un Puesto",
+    "Cargar Puestos en Lista Dinamica",
+    "Mostrar Lista Dinamica de Puestos"
 };
 const int numOpcionesGestionPuestos = sizeof(opcionesGestionPuestos) / sizeof(opcionesGestionPuestos[0]);
 
@@ -89,7 +91,9 @@ const char *opcionesGestionEmpleados[] = {
     "Baja Fisica de Empleado",
     "Modificar un Empleado",
     "Listar Empleados",
-    "Consultar un Empleado"
+    "Consultar un Empleado",
+    "Cargar Empleados en Lista Dinamica",
+    "Mostrar Lista Dinamica de Empleados"
 };
 const int numOpcionesGestionEmpleados = sizeof(opcionesGestionEmpleados) / sizeof(opcionesGestionEmpleados[0]);
 
@@ -143,6 +147,8 @@ void crearArchivo(const char *nombreArchivo);
 // Matchmaking - Funciones de listas enlazadas
 void cargarEmpleadosEnLista();
 void cargarPuestosEnLista();
+void mostrarListaEmpleados();
+void mostrarListaPuestos();
 void liberarListaEmpleados();
 void liberarListaPuestos();
 void buscarCandidatosParaPuesto();
@@ -280,6 +286,12 @@ void menuGestionPuestos() {
             case 7:
                 consultarPuesto();
                 break;
+            case 8:
+                cargarPuestosEnLista();
+                break;
+            case 9:
+                mostrarListaPuestos();
+                break;
             case 0:
                 break;
             default:
@@ -322,6 +334,12 @@ void menuGestionEmpleados() {
                 break;
             case 7:
                 consultarEmpleado();
+                break;
+            case 8:
+                cargarEmpleadosEnLista();
+                break;
+            case 9:
+                mostrarListaEmpleados();
                 break;
             case 0:
                 break;
@@ -1098,6 +1116,53 @@ void cargarPuestosEnLista() {
 
     fclose(fp);
     printf(">> %d puesto(s) cargado(s) en memoria.\n", contador);
+}
+
+void mostrarListaEmpleados() {
+    if (listaEmpleados == NULL) {
+        printf("La lista de empleados esta vacia.\n");
+        return;
+    }
+
+    printf("\n--- Empleados en Memoria (Lista Enlazada) ---\n");
+    nodoEmpleado *p = listaEmpleados;
+    int i = 1;
+
+    while (p != NULL) {
+        printf("\n[%d] DNI: %d\n", i, p->dato.dni);
+        printf("    Nombre: %s\n", p->dato.nombre);
+        printf("    Edad: %d\n", p->dato.edad);
+        printf("    Nivel Educacion: %d\n", p->dato.nivelEducacion);
+        printf("    Anios Experiencia: %d\n", p->dato.aniosExperiencia);
+        p = p->sig;
+        i++;
+    }
+
+    printf("\n>> Total: %d empleado(s) en la lista.\n", i - 1);
+}
+
+void mostrarListaPuestos() {
+    if (listaPuestos == NULL) {
+        printf("La lista de puestos esta vacia.\n");
+        return;
+    }
+
+    printf("\n--- Puestos en Memoria (Lista Enlazada) ---\n");
+    nodoPuesto *p = listaPuestos;
+    int i = 1;
+
+    while (p != NULL) {
+        printf("\n[%d] ID: %d\n", i, p->dato.id);
+        printf("    Cargo: %s\n", p->dato.nombreCargo);
+        printf("    Edad Minima: %d\n", p->dato.edadMinima);
+        printf("    Edad Maxima: %d\n", p->dato.edadMaxima);
+        printf("    Nivel Educacion Req: %d\n", p->dato.nivelEducacionReq);
+        printf("    Anios Experiencia Req: %d\n", p->dato.aniosExperienciaReq);
+        p = p->sig;
+        i++;
+    }
+
+    printf("\n>> Total: %d puesto(s) en la lista.\n", i - 1);
 }
 
 /**
