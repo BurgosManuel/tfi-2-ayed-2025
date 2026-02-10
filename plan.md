@@ -136,6 +136,16 @@ Al ingresar a este módulo, el sistema carga automáticamente los datos de `empl
     *   Por cada registro de puesto activo, crear un nuevo nodo y añadirlo a la lista.
     *   Informar al usuario cuántos puestos se cargaron.
 
+*   [x] Implementar `mostrarListaEmpleados()`:
+    *   Recorrer la lista enlazada de empleados cargados en memoria.
+    *   Mostrar todos los datos de cada nodo (DNI, nombre, edad, nivel educativo, experiencia).
+    *   Informar el total de empleados en la lista.
+
+*   [x] Implementar `mostrarListaPuestos()`:
+    *   Recorrer la lista enlazada de puestos cargados en memoria.
+    *   Mostrar todos los datos de cada nodo (ID, cargo, edades, nivel educativo, experiencia).
+    *   Informar el total de puestos en la lista.
+
 *   [x] Implementar `buscarCandidatosParaPuesto()`:
     *   Solicitar al usuario el ID del puesto.
     *   Buscar el puesto en la lista enlazada de puestos en memoria.
@@ -145,6 +155,13 @@ Al ingresar a este módulo, el sistema carga automáticamente los datos de `empl
 
 *   [x] Implementar `liberarListaEmpleados()` y `liberarListaPuestos()`:
     *   Funciones auxiliares para liberar la memoria de las listas al salir del módulo o al recargar.
+
+*   [x] Agregar opciones de listas enlazadas a los menús de gestión:
+    *   En `menuGestionPuestos`: Opciones "Cargar Puestos en Lista Dinámica" y "Mostrar Lista Dinámica de Puestos".
+    *   En `menuGestionEmpleados`: Opciones "Cargar Empleados en Lista Dinámica" y "Mostrar Lista Dinámica de Empleados".
+
+*   [x] Documentación de listas enlazadas:
+    *   Crear documento `Listas_Enlazadas_Explicacion.md` con explicación detallada de la implementación.
 
 ## 📋 7. ASIGNACIÓN DE TAREAS
 

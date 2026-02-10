@@ -38,6 +38,8 @@ Los datos se persisten en archivos binarios:
         *   **Modificar**: Permite editar los campos de un registro existente con validaciones.
         *   **Listar**: Muestra todos los registros activos del archivo.
         *   **Consultar**: Busca y muestra un registro específico por su ID o DNI.
+        *   **Cargar en Lista Dinámica**: Carga los registros activos del archivo en una lista enlazada en memoria.
+        *   **Mostrar Lista Dinámica**: Muestra los datos cargados en la lista enlazada.
 
 5.  **Menú de Matchmaking (`menuMatchmaking`)**:
     *   Al ingresar a este módulo, el sistema carga automáticamente los datos de `empleados.dat` y `puestos.dat` en **listas enlazadas** en memoria.
@@ -220,6 +222,20 @@ struct nodoPuesto {
     - Por cada puesto activo, crea un nuevo nodo y lo añade al final de la lista.
     - Informa cuántos puestos se cargaron.
 
+#### Funciones de Visualización de Listas
+
+*   **`mostrarListaEmpleados()`**:
+    - Recorre la lista enlazada de empleados desde el primer nodo hasta `NULL`.
+    - Muestra los datos de cada nodo: DNI, nombre, edad, nivel de educación, años de experiencia.
+    - Informa el total de empleados en la lista.
+    - Si la lista está vacía, muestra un mensaje informativo.
+
+*   **`mostrarListaPuestos()`**:
+    - Recorre la lista enlazada de puestos desde el primer nodo hasta `NULL`.
+    - Muestra los datos de cada nodo: ID, cargo, edad mínima/máxima, nivel educativo requerido, años de experiencia requeridos.
+    - Informa el total de puestos en la lista.
+    - Si la lista está vacía, muestra un mensaje informativo.
+
 #### Funciones de Liberación de Memoria
 
 *   **`liberarListaEmpleados()`**:
@@ -272,8 +288,21 @@ Un empleado es considerado **candidato válido** para un puesto si cumple **todo
 | Datos | Estrategia | Momento de Carga |
 |-------|-----------|------------------|
 | Usuarios | Array en memoria | Al iniciar el programa |
-| Empleados | Lista enlazada | Al entrar al módulo Matchmaking |
-| Puestos | Lista enlazada | Al entrar al módulo Matchmaking |
+| Empleados | Lista enlazada | Desde menú de gestión o al entrar al módulo Matchmaking |
+| Puestos | Lista enlazada | Desde menú de gestión o al entrar al módulo Matchmaking |
 
 Los usuarios se guardan automáticamente al cerrar el programa. Las listas enlazadas se liberan al salir del módulo de Matchmaking.
+
+## Documentación Adicional
+
+Para una explicación detallada sobre la implementación de listas enlazadas en este proyecto, consultar el documento:
+
+📚 **[Listas_Enlazadas_Explicacion.md](Listas_Enlazadas_Explicacion.md)**
+
+Este documento incluye:
+- Conceptos teóricos de listas enlazadas
+- Comparación con arreglos
+- Explicación paso a paso del código
+- Diagramas visuales de la estructura en memoria
+- Preguntas frecuentes
 
